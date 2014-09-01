@@ -19,6 +19,7 @@ setup(
     packages=['sakuyaclient'],
     install_requires=[
         'pyserial',
+        'beautifulsoup4',
     ],
     include_package_data=True,
     zip_safe=False)
