@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='sakuya-client',
-    version='0.6.0',
+    version='0.1.0',
     entry_points = {
         'console_scripts': ['sakuya=sakuyaclient:run'],
     },
@@ -19,7 +19,6 @@ setup(
     packages=['sakuyaclient'],
     install_requires=[
         'pyserial',
-        'jenkinsapi',
     ],
     include_package_data=True,
     zip_safe=False)
