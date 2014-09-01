@@ -7,6 +7,16 @@ class TracAPI(object):
         self._url = trac_url + '/query'
 
     def get_query(self, cols=None, owner=None, status=None, order='Priority'):
+        url = self._get_url(cols, owner, status, order)
+
+        str_data = urllib.urlopen(url).read()
+        document = BeautifulSoup(str_data)
+
+        tickets = self._parse_document(document)
+
+        return tickets
+
+    def _get_url(self, cols, owner, status, order):
         # Can't do a query with no columns
         if cols is None:
             raise RuntimeError
@@ -27,6 +37,28 @@ class TracAPI(object):
             for status_type in status:
                 url += '&status=' + status_type
 
-        str_data = urllib.urlopen(url).read()
-        document = BeautifulSoup(str_data)
-        return document
+        return url
+
+    def _parse_document(self, document):
+        tickets = list()
+        headers = list()
+
+        # Get all tabel rows in tickets table
+        for table_row in document.select('.tickets')[0].findAll('tr'):
+            ticket_data = dict()
+
+            # Get all data cells in table
+            for table_data in table_row.findAll('td'):
+                key = table_data['class'][0]
+                try:
+                    value = table_data.string.strip()
+                except AttributeError:
+                    value = table_data.a.string.strip()
+
+                ticket_data[key] = value
+
+            # Append only if data exists
+            if len(ticket_data) > 0:
+                tickets.append(ticket_data)
+
+        return tickets
