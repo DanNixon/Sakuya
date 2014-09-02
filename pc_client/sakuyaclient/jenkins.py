@@ -28,8 +28,8 @@ class JenkinsClient(object):
         if self._subscribed_jobs is None:
             self._subscribed_jobs = self.get_all_job_names()
 
-    def get_data(self, depth):
-        url = self._url + '?depth=' + str(depth)
+    def get_data(self):
+        url = self._url + '?pretty=true&depth=2&tree=jobs[name,color,healthReport[*],lastBuild[culprits[fullName]]]'
         return ast.literal_eval(urllib.urlopen(url).read())
 
     def get_job(self, job_name, data):
@@ -43,24 +43,29 @@ class JenkinsClient(object):
 
     def get_all_job_names(self, data=None):
         if data is None:
-            data = self.get_data(0)
+            data = self.get_data()
 
         return [job['name'] for job in data['jobs']]
 
     def get_job_status(self, job_name, data=None):
         if data is None:
-            data = self.get_data(0)
+            data = self.get_data()
 
         job = self.get_job(job_name, data)
         colour = job['color']
 
         status = color_to_status(colour)
 
-        return status
+        job_culprits = job['lastBuild']['culprits']
+        culprits = None
+        if len(job_culprits) > 0:
+            culprits = [c['fullName'] for c in job_culprits]
+
+        return (status, culprits)
 
     def get_job_health(self, job_name, data=None):
         if data is None:
-            data = self.get_data(1)
+            data = self.get_data()
 
         job = self.get_job(job_name, data)
 
@@ -68,7 +73,7 @@ class JenkinsClient(object):
 
     def get_subscribed_jobs(self, data=None):
         if data is None:
-            data = self.get_data(1)
+            data = self.get_data()
 
         jobs = dict()
         for job_name in self._subscribed_jobs:
