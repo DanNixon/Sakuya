@@ -1,21 +1,6 @@
 import ast
 import urllib
 
-def color_to_status(colour):
-    status = dict()
-
-    data = colour.split('_')
-
-    status['inprogress'] = not len(data) == 1
-
-    if data[0] == 'red':
-        status['result'] = 'failed'
-    if data[0] == 'yellow':
-        status['result'] = 'unstable'
-    if data[0] == 'blue':
-        status['result'] = 'passed'
-
-    return status
 
 class JenkinsClient(object):
     def __init__(self, server_url, jobs=None):
@@ -29,7 +14,7 @@ class JenkinsClient(object):
             self._subscribed_jobs = self.get_all_job_names()
 
     def get_data(self):
-        url = self._url + '?pretty=true&depth=2&tree=jobs[name,color,healthReport[*],lastBuild[culprits[fullName]]]'
+        url = self._url + '?pretty=true&depth=2&tree=jobs[name,healthReport[*],lastBuild[building,result,culprits[fullName]]]'
         return ast.literal_eval(urllib.urlopen(url).read())
 
     def get_job(self, job_name, data):
@@ -52,16 +37,16 @@ class JenkinsClient(object):
             data = self.get_data()
 
         job = self.get_job(job_name, data)
-        colour = job['color']
+        status = dict()
 
-        status = color_to_status(colour)
+        status['inprogress'] = job['lastBuild']['building']
+        status['result'] = job['lastBuild']['result']
 
         job_culprits = job['lastBuild']['culprits']
-        culprits = None
         if len(job_culprits) > 0:
-            culprits = [c['fullName'] for c in job_culprits]
+            status['culprits'] = [c['fullName'] for c in job_culprits]
 
-        return (status, culprits)
+        return status
 
     def get_job_health(self, job_name, data=None):
         if data is None:
