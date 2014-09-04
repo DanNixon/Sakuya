@@ -18,7 +18,7 @@ class TracAPI(object):
 
     def _get_url(self, cols, owner, status, order):
         # Can't do a query with no columns
-        if cols is None:
+        if cols is None or len(cols) is 0:
             raise RuntimeError
 
         url = self._url + '?order=' + order
