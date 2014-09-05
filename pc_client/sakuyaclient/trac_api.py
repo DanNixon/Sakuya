@@ -2,11 +2,17 @@ import urllib
 from bs4 import BeautifulSoup
 
 class TracAPI(object):
+    """
+    Basic API to access Trac via HTML scraping.
+    """
 
     def __init__(self, trac_url):
         self._url = trac_url + '/query'
 
     def get_query(self, cols=None, owner=None, status=None, order='Priority'):
+        """
+        Gets a list of tickets for a given query.
+        """
         url = self._get_url(cols, owner, status, order)
 
         str_data = urllib.urlopen(url).read()
@@ -17,6 +23,9 @@ class TracAPI(object):
         return tickets
 
     def _get_url(self, cols, owner, status, order):
+        """
+        Creates a URL for given query parameters.
+        """
         # Can't do a query with no columns
         if cols is None or len(cols) is 0:
             raise RuntimeError
@@ -40,10 +49,13 @@ class TracAPI(object):
         return url
 
     def _parse_document(self, document):
+        """
+        Parses a HTML document and extracts ticket information.
+        """
         tickets = list()
         headers = list()
 
-        # Get all tabel rows in tickets table
+        # Get all table rows in tickets table
         for table_row in document.select('.tickets')[0].findAll('tr'):
             ticket_data = dict()
 

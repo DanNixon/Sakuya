@@ -2,8 +2,11 @@ import ast
 import urllib
 from notification_source import NotificationSource
 
-
 class JenkinsClient(NotificationSource):
+    """
+    Access Jenkins and get updates for a given set of jobs.
+    """
+
     def __init__(self, server_url, jobs=None):
         self._url = server_url + '/api/python'
 
@@ -15,10 +18,16 @@ class JenkinsClient(NotificationSource):
             self._subscribed_jobs = self.get_all_job_names()
 
     def get_data(self):
+        """
+        Gets raw data from Jenkins server.
+        """
         url = self._url + '?pretty=true&depth=2&tree=jobs[name,healthReport[*],lastBuild[building,result,culprits[fullName]]]'
         return ast.literal_eval(urllib.urlopen(url).read())
 
     def get_job(self, job_name, data):
+        """
+        Gets data for a given job.
+        """
         all_jobs = data['jobs']
         try:
             job = (j for j in all_jobs if j['name'] == job_name).next()
@@ -28,12 +37,18 @@ class JenkinsClient(NotificationSource):
         return job
 
     def get_all_job_names(self, data=None):
+        """
+        Gets the name of all jobs on the server.
+        """
         if data is None:
             data = self.get_data()
 
         return [job['name'] for job in data['jobs']]
 
     def get_job_status(self, job_name, data=None):
+        """
+        Gets the status of a given job.
+        """
         if data is None:
             data = self.get_data()
 
@@ -50,6 +65,9 @@ class JenkinsClient(NotificationSource):
         return status
 
     def get_job_health(self, job_name, data=None):
+        """
+        Gets the health data for a given job.
+        """
         if data is None:
             data = self.get_data()
 
@@ -58,6 +76,9 @@ class JenkinsClient(NotificationSource):
         return job['healthReport']
 
     def get_subscribed_jobs(self, data=None):
+        """
+        Gets data ffor all subscribed jobs.
+        """
         if data is None:
             data = self.get_data()
 
@@ -68,6 +89,9 @@ class JenkinsClient(NotificationSource):
         return jobs
 
     def poll(self):
+        """
+        Updates the local job list from Jenkins and returns jobs with changed status.
+        """
         jobs = self.get_subscribed_jobs()
         jobs_diff = dict()
 

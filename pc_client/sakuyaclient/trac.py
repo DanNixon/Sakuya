@@ -3,6 +3,9 @@ from notification_source import NotificationSource
 from trac_api import TracAPI
 
 class TracClient(NotificationSource):
+    """
+    Used to manage getting notifications of Trac ticket updates.
+    """
 
     def __init__(self, trac_url, cache_filename):
         self._url = trac_url
@@ -14,10 +17,16 @@ class TracClient(NotificationSource):
         self._columns = list()
 
     def _write_cache(self, filename, tickets):
+        """
+        Writes the ticket dictionary to file.
+        """
         with open(filename, 'w+') as cache_file:
             json.dump(tickets, cache_file)
 
     def _read_cache(self, filename):
+        """
+        Reads the ticket dictionary from file.
+        """
         try:
             with open(filename, 'r') as cache_file:
                 tickets = json.load(cache_file)
@@ -26,6 +35,9 @@ class TracClient(NotificationSource):
             return []
 
     def _diff(self, old, new):
+        """
+        Compares two ticket dictionaries and returns the changed tickets.
+        """
         changed_tickets = list()
 
         for ticket in new:
@@ -47,10 +59,16 @@ class TracClient(NotificationSource):
         return changed_tickets
 
     def set_subscriptions(self, owners, status):
+        """
+        Set the owners and status types that are queried.
+        """
         self._subscription['owners'] = owners
         self._subscription['status'] = status
 
     def set_data_columns(self, columns):
+        """
+        Set the columns that are retrieved from the Trac query.
+        """
         if len(columns) == 0:
             raise ValueError('Must be at least one columns')
 
@@ -63,6 +81,9 @@ class TracClient(NotificationSource):
         self._columns = columns
 
     def poll(self):
+        """
+        Gets new ticket data and compares it to the last retrieved.
+        """
         old_tickets = self._read_cache(self._cache_filename)
         new_tickets = self._api.get_query(self._columns, self._subscription['owners'], self._subscription['status'])
 
