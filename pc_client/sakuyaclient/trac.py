@@ -1,7 +1,8 @@
 import json
+from notification_source import NotificationSource
 from trac_api import TracAPI
 
-class TracClient(object):
+class TracClient(NotificationSource):
 
     def __init__(self, trac_url, cache_filename):
         self._url = trac_url

@@ -1,8 +1,9 @@
 import ast
 import urllib
+from notification_source import NotificationSource
 
 
-class JenkinsClient(object):
+class JenkinsClient(NotificationSource):
     def __init__(self, server_url, jobs=None):
         self._url = server_url + '/api/python'
 
