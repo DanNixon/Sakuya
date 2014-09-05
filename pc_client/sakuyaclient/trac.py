@@ -39,14 +39,9 @@ class TracClient(object):
                 changed_tickets.append(ticket)
                 continue
 
-            for key in ticket.keys():
-                if key not in old_ticket:
-                    changed_tickets.append(ticket)
-                    continue
-
-                if ticket[key] != old_ticket[key]:
-                    changed_tickets.append(ticket)
-                    continue
+            if ticket['status'] != old_ticket['status']:
+                changed_tickets.append(ticket)
+                continue
 
         return changed_tickets
 
@@ -55,8 +50,8 @@ class TracClient(object):
         self._subscription['status'] = status
 
     def set_data_columns(self, columns):
-        if len(columns) < 2:
-            raise ValueError('Must be at least two columns')
+        if len(columns) == 0:
+            raise ValueError('Must be at least one columns')
 
         if not 'id' in columns:
             columns.append('id')
