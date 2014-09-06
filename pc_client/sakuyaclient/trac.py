@@ -14,7 +14,7 @@ class TracClient(NotificationSource):
         self._cache_filename = cache_filename
 
         self._subscription = dict()
-        self._columns = list()
+        self._columns = ['id', 'status']  # The bare minimun columns needed
 
     def _write_cache(self, filename, tickets):
         """
@@ -58,10 +58,13 @@ class TracClient(NotificationSource):
 
         return changed_tickets
 
-    def set_subscriptions(self, owners, status):
+    def set_subscriptions(self, owners, status=None):
         """
         Set the owners and status types that are queried.
         """
+        if status is None:
+            status = ['assigned', 'new', 'inprogress', 'verify', 'verifying', 'closed', 'reopened', 'infoneeded']
+
         self._subscription['owners'] = owners
         self._subscription['status'] = status
 

@@ -26,9 +26,8 @@ class TracAPI(object):
         """
         Creates a URL for given query parameters.
         """
-        # Can't do a query with no columns
         if cols is None or len(cols) is 0:
-            raise RuntimeError
+            raise RuntimeError("Can't do a query with no columns")
 
         url = self._url + '?order=' + order
 

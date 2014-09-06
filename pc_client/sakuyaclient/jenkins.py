@@ -2,6 +2,8 @@ import ast
 import urllib
 from notification_source import NotificationSource
 
+# TODO: Use cache file (as per TracClient)
+
 class JenkinsClient(NotificationSource):
     """
     Access Jenkins and get updates for a given set of jobs.
