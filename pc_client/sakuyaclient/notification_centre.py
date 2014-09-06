@@ -3,11 +3,19 @@ from jenkins import JenkinsClient
 
 class NotificationCentre(object):
     """
-    Manages notifications from all sources.
+    Manages notifications from all sources and distributes them to sinks.
     """
 
-    def __init__(self):
+    def __init__(self, update_interval):
         self._sources = dict()
+        self._sinks = dict()
+
+        self._update_interval = update_interval
+        self._update_thread = None
+
+    def start(self):
+        self._update_thread = threading.Thread(target=_update, args=())
+        self._update_thread.start()
 
     def add_notification_source(self, source_id, source):
         """
@@ -17,6 +25,15 @@ class NotificationCentre(object):
             raise ValueError('Source with given ID already exists')
 
         self._sources[source_id] = source
+
+    def add_notification_sink(self, sink_id, sink):
+        """
+        Adds a new notification sink.
+        """
+        if sink_id in self._sinks:
+            raise ValueError('Sink with given ID already exists')
+
+        self._sinks[sink_id] = sink
 
     def poll(self, source_ids=None):
         """
@@ -31,3 +48,14 @@ class NotificationCentre(object):
 
         return diffs
 
+    def _update(self):
+        """
+        Handles getting new data at a given interval.
+        """
+        while(1):
+            diffs = self._poll()
+
+            for sink in self._sinks:
+                sink.handle(diffs)
+
+            time.sleep(self._update_interval)
