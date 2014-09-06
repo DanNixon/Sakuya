@@ -1,5 +1,5 @@
-import unittest
 import os
+import unittest
 from sakuyaclient.jenkins import JenkinsClient
 from sakuyaclient.trac import TracClient
 from sakuyaclient.notification_centre import NotificationCentre
@@ -8,8 +8,9 @@ class NotificationCentreTest(unittest.TestCase):
 
     def setUp(self):
         self._trac_cache_file = 'ticket_cache.txt'
+        self._builds_cache_file = 'builds_cache.txt'
 
-        self._jenkins = JenkinsClient('http://builds.mantidproject.org', ['develop_clean'])
+        self._jenkins = JenkinsClient('http://builds.mantidproject.org', self._builds_cache_file, ['develop_clean'])
         self._trac = TracClient('http://trac.mantidproject.org/mantid', self._trac_cache_file)
         self._trac.set_subscriptions(['Dan Nixon'])
 
@@ -20,6 +21,9 @@ class NotificationCentreTest(unittest.TestCase):
     def tearDown(self):
         if os.path.exists(self._trac_cache_file):
             os.remove(self._trac_cache_file)
+
+        if os.path.exists(self._builds_cache_file):
+            os.remove(self._builds_cache_file)
 
     def test_poll(self):
         results = self._notifications.poll()

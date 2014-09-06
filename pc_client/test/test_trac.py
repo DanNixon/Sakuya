@@ -1,5 +1,5 @@
-import unittest
 import os
+import unittest
 from sakuyaclient.trac import TracClient
 
 class TracClientTest(unittest.TestCase):

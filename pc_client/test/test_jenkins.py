@@ -1,3 +1,4 @@
+import os
 import unittest
 from sakuyaclient.jenkins import JenkinsClient
 
@@ -6,9 +7,15 @@ class JenkinsClientTest(unittest.TestCase):
     def setUp(self):
         self._jobs = {'1':'develop_clean', 'fake':'fake_job'}
         self._server = 'http://builds.mantidproject.org'
-        self._jenkins = JenkinsClient(self._server, [self._jobs['1']])
+        self._cache_filename = 'builds_cache.txt'
 
-    def test_get_jpb_names(self):
+        self._jenkins = JenkinsClient(self._server, self._cache_filename, [self._jobs['1']])
+
+    def tearDown(self):
+        if os.path.exists(self._cache_filename):
+            os.remove(self._cache_filename)
+
+    def test_get_job_names(self):
         result = self._jenkins.get_all_job_names()
         self.assertIsNotNone(result)
         self.assertTrue(type(result) is list)
@@ -37,16 +44,24 @@ class JenkinsClientTest(unittest.TestCase):
 
     def test_get_subscribed_jobs(self):
         result = self._jenkins.get_subscribed_jobs()
-        self.assertIsNotNone(result[self._jobs['1']])
+
+        try:
+            job = (j for j in result if j['name'] == self._jobs['1']).next()
+        except StopIteration:
+            job = None
+
+        self.assertIsNotNone(job)
 
     def test_poll(self):
-        # First poll should return empty dict
         result = self._jenkins.poll()
-        self.assertEquals(result, {})
+        self.assertNotEqual(len(result), 0)
+
+        print result
 
         result = self._jenkins.poll()
-        self.assertIsNotNone(result)
-        self.assertTrue(type(result) is dict)
+        self.assertEquals(len(result), 0)
+
+        print result
 
 if __name__ == '__main__':
     unittest.main()
