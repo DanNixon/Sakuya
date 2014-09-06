@@ -14,7 +14,7 @@ class NotificationCentreTest(unittest.TestCase):
         self._trac = TracClient('http://trac.mantidproject.org/mantid', self._trac_cache_file)
         self._trac.set_subscriptions(['Dan Nixon'])
 
-        self._notifications = NotificationCentre()
+        self._notifications = NotificationCentre(300)
         self._notifications.add_notification_source('tickets', self._trac)
         self._notifications.add_notification_source('builds', self._jenkins)
 
