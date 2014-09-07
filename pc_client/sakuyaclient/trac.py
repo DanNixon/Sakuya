@@ -17,7 +17,7 @@ class TracClient(NotificationSource):
         self._cache_filename = cache_filename
 
         self._subscription = dict()
-        self._columns = ['id', 'status']  # The bare minimun columns needed
+        self._columns = ['id', 'status', 'summary']  # The bare minimun columns needed
 
     def _write_cache(self, filename, tickets):
         """
@@ -56,7 +56,7 @@ class TracClient(NotificationSource):
                 continue
 
             if ticket['status'] != old_ticket['status']:
-                ticket['old_status'] = old_ticket['status']
+                ticket['last_status'] = old_ticket['status']
                 changed_tickets.append(ticket)
                 continue
 

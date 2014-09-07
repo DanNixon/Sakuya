@@ -13,7 +13,7 @@ def run():
 def console_test():
     trac_cache_file = 'ticket_cache.txt'
     builds_cache_file = 'builds_cache.txt'
-    builds = ['develop_clean', 'develop_incremental']
+    builds = ['develop_clean', 'develop_incremental', 'pylint_develop']
 
     jenkins = JenkinsClient('http://builds.mantidproject.org', builds_cache_file, builds)
     trac = TracClient('http://trac.mantidproject.org/mantid', trac_cache_file)

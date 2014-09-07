@@ -80,6 +80,11 @@ class JenkinsClient(NotificationSource):
         status['inprogress'] = job['lastBuild']['building']
         status['result'] = job['lastBuild']['result']
 
+        if status['result'] is not None:
+            status['result'] = status['result'].lower()
+        else:
+            status['result'] = 'in progress'
+
         job_culprits = job['lastBuild']['culprits']
         if len(job_culprits) > 0:
             status['culprits'] = [c['fullName'] for c in job_culprits]
@@ -131,7 +136,7 @@ class JenkinsClient(NotificationSource):
                 continue
 
             if job['result'] != old_job['result']:
-                job['result_old'] = old_job['result']
+                job['last_result'] = old_job['result']
                 jobs_diff.append(job)
                 continue
 
