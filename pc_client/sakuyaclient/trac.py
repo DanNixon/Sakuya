@@ -7,6 +7,9 @@ class TracClient(NotificationSource):
     Used to manage getting notifications of Trac ticket updates.
     """
 
+    def name(self):
+        return 'Trac'
+
     def __init__(self, trac_url, cache_filename):
         self._url = trac_url
         self._api = TracAPI(self._url)
@@ -53,6 +56,7 @@ class TracClient(NotificationSource):
                 continue
 
             if ticket['status'] != old_ticket['status']:
+                ticket['old_status'] = old_ticket['status']
                 changed_tickets.append(ticket)
                 continue
 

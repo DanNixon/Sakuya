@@ -8,6 +8,9 @@ class JenkinsClient(NotificationSource):
     Access Jenkins and get updates for a given set of jobs.
     """
 
+    def name(self):
+        return 'Jenkins'
+
     def __init__(self, server_url, cache_filename, jobs=None):
         self._url = server_url + '/api/python'
         self._cache_filename = cache_filename
@@ -128,6 +131,7 @@ class JenkinsClient(NotificationSource):
                 continue
 
             if job['result'] != old_job['result']:
+                job['result_old'] = old_job['result']
                 jobs_diff.append(job)
                 continue
 

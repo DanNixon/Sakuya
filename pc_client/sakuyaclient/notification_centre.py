@@ -48,7 +48,7 @@ class NotificationCentre(object):
 
         diffs = dict()
         for source_id in source_ids:
-            diffs[source_id] = self._sources[source_id].poll()
+            diffs[source_id] = (self._sources[source_id].name(), self._sources[source_id].poll())
 
         return diffs
 

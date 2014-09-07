@@ -49,12 +49,12 @@ class NotificationCentreTest(unittest.TestCase):
         # First poll should return diffs
         results = self._notifications.poll()
         for key in results.keys():
-            self.assertNotEqual(len(results[key]), 0)
+            self.assertNotEqual(len(results[key][1]), 0)
 
         # Second poll should return no diffs
         results = self._notifications.poll()
         for key in results.keys():
-            self.assertEqual(len(results[key]), 0)
+            self.assertEqual(len(results[key][1]), 0)
 
 if __name__ == '__main__':
     unittest.main()
