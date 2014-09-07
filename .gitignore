@@ -3,3 +3,6 @@
 */build/*
 */dist/*
 */sakuya_client.egg-info/*
+
+# Cache files
+*cache.txt

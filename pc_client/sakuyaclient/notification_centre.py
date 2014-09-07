@@ -1,3 +1,5 @@
+import threading
+import time
 from trac import TracClient
 from jenkins import JenkinsClient
 
@@ -13,9 +15,11 @@ class NotificationCentre(object):
         self._update_interval = update_interval
         self._update_thread = None
 
-    def start(self):
-        self._update_thread = threading.Thread(target=_update, args=())
+    def start(self, join=True):
+        self._update_thread = threading.Thread(target=self._update, args=())
         self._update_thread.start()
+        if join:
+            self._update_thread.join()
 
     def add_notification_source(self, source_id, source):
         """
@@ -53,9 +57,9 @@ class NotificationCentre(object):
         Handles getting new data at a given interval.
         """
         while(1):
-            diffs = self._poll()
+            diffs = self.poll()
 
-            for sink in self._sinks:
-                sink.handle(diffs)
+            for sink_id in self._sinks.keys():
+                self._sinks[sink_id].handle(diffs)
 
             time.sleep(self._update_interval)

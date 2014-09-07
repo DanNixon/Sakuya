@@ -8,7 +8,7 @@ class NotificationSink():
     __metaclass__ = ABCMeta
 
     @abstractmethod
-    def handle(updates):
+    def handle(self, updates):
         """
         Used to handle new updates retrieved by NotificationCentre.
         """

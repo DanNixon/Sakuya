@@ -8,7 +8,7 @@ class NotificationSource():
     __metaclass__ = ABCMeta
 
     @abstractmethod
-    def poll():
+    def poll(self):
         """
         Used to get a set of changes between data retrieved in this call and the last.
         """
