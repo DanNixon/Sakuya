@@ -35,7 +35,7 @@ def run():
     parser.add_argument(
         '--builds',
         action='store',
-        default='develop_incremental,develop_clean',
+        default='develop_incremental,develop_clean,develop_doctest,develop_systemtests_rhel6,develop_systemtests_all,cppcheck_develop,doxygen_develop,valgrind_develop_core_packages',
         help='Comma separated list of build jobs to watch'
     )
 
