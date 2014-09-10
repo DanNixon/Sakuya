@@ -1,0 +1,6 @@
+#ifndef _SAKUYA_BITMAPS_H
+#define _SAKUYA_BITMAPS_H
+
+//TODO
+
+#endif //_SAKUYA_BITMAPS_H
