@@ -5,6 +5,8 @@
 #include "bitmaps.h"
 #include "types.h"
 
+#define BACKLIGHT_IDLE_TIMEOUT_MS 30000
+
 TiLDA_MKe tilda;
 display_t display = DISPLAY_IDLE;
 
@@ -24,13 +26,15 @@ void loop()
   tilda.buttons.poll();
 
   // Poll backlight timeout
-  backlight_timeout(10000); //TODO: Temporary value
+  backlight_timeout(BACKLIGHT_IDLE_TIMEOUT_MS);
 
   // Display some text on the GLCD
   tilda.glcd.firstPage();
   do
   {
     //TODO
+
+    tilda.glcd.drawBitmapP(0, 0, 7, 64, flan_bitmap);
   }
   while(tilda.glcd.nextPage());
 }
