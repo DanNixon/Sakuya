@@ -43,7 +43,7 @@ class JenkinsClient(NotificationSource):
         """
         Gets raw data from Jenkins server.
         """
-        url = self._url + '?pretty=true&depth=2&tree=jobs[name,healthReport[*],lastBuild[building,result,culprits[fullName]]]'
+        url = self._url + '?pretty=true&depth=2&tree=jobs[name,healthReport[*],lastCompletedBuild[result],lastBuild[building,result,culprits[fullName]]]'
         return ast.literal_eval(urllib.urlopen(url).read())
 
     def _get_raw_job(self, job_name, data):
@@ -83,7 +83,7 @@ class JenkinsClient(NotificationSource):
         if status['result'] is not None:
             status['result'] = status['result'].lower()
         else:
-            status['result'] = 'in progress'
+            status['result'] = job['lastCompletedBuild']['result']
 
         job_culprits = job['lastBuild']['culprits']
         if len(job_culprits) > 0:

@@ -36,8 +36,12 @@ class ConsoleSink(NotificationSink):
         Handles printing a Jenkins build.
         """
         if 'last_result' in job:
-            sys.stdout.write('Build %s went from %s to %s\n' %
-                    (job['name'], job['last_result'], job['result']))
+            if job['inprogress']:
+                sys.stdout.write('Build %s went from %s to %s\n' %
+                        (job['name'], job['last_result'], job['result']))
+            else:
+                sys.stdout.write('Build %s started (previously %s)\n' %
+                        (job['name'], job['last_result']))
         else:
             sys.stdout.write('Build %s is %s\n' %
                     (job['name'], job['result']))
