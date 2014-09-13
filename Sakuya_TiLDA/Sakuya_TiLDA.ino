@@ -34,7 +34,8 @@ void loop()
   {
     //TODO
 
-    tilda.glcd.drawBitmapP(0, 0, 7, 64, flan_bitmap);
+    tilda.glcd.drawBitmapP(0, 0, 8, 64, patchy_1_bitmap);
+    tilda.glcd.drawBitmapP(64, 0, 8, 64, patchy_2_bitmap);
   }
   while(tilda.glcd.nextPage());
 }
@@ -79,8 +80,8 @@ bool handle_idle_buttons(buttonid_t id)
 {
   switch(id)
   {
-    case BUTTON_LEFT:
-    case BUTTON_RIGHT:
+    case BUTTON_DOWN:
+    case BUTTON_UP:
     case BUTTON_A:
       //TODO: Go to notification display
       break;
@@ -100,10 +101,10 @@ bool handle_notification_buttons(buttonid_t id)
 {
   switch(id)
   {
-    case BUTTON_LEFT:
+    case BUTTON_DOWN:
       //TODO: Go to previous notification
       break;
-    case BUTTON_RIGHT:
+    case BUTTON_UP:
       //TODO: Go to next notification
       break;
     case BUTTON_A:
