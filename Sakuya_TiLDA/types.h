@@ -27,13 +27,9 @@ enum ntype_t
 struct notification_t
 {
   ntype_t type;
+  uint8_t bitmap_id;
   char *summary;
   char *timestamp;
-
-  char *old_state;
-  char *new_state;
-
-  int8_t change_score;
 };
 
 /**

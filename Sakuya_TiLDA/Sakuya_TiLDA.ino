@@ -166,6 +166,7 @@ bool handle_notification_buttons(buttonid_t id)
         display = DISPLAY_IDLE;
 
       notif_list_remove(current_notif);
+      current_display_notif = NULL;
       break;
 
     case BUTTON_B:
@@ -287,11 +288,9 @@ bool process_notification_message(char *data)
 
   char summary[data_len];
   char timestamp[data_len];
-  char old_state[data_len];
-  char new_state[data_len];
 
-  sscanf(data, "%c|%d|%[^'|']|%[^'|']|%[^'|']|%[^'|']|%d",
-      &msg_type, &(notification->type), summary, timestamp, old_state, new_state, &(notification->change_score));
+  sscanf(data, "%c|%d|%d|%[^'|']|%[^'|']",
+      &msg_type, &(notification->type), &(notification->bitmap_id), summary, timestamp);
 
   if(msg_type != 'N')
     return false;
@@ -302,26 +301,16 @@ bool process_notification_message(char *data)
   notification->timestamp = new char[strlen(timestamp) + 1];
   memcpy(notification->timestamp, timestamp, strlen(timestamp) + 1);
 
-  notification->old_state = new char[strlen(old_state) + 1];
-  memcpy(notification->old_state, old_state, strlen(old_state) + 1);
-
-  notification->new_state = new char[strlen(new_state) + 1];
-  memcpy(notification->new_state, new_state, strlen(new_state) + 1);
-
 #ifdef SERIAL_DEBUG
   SERIAL.println("Got notification message:");
   SERIAL.print("- Type: ");
   SERIAL.println(notification->type);
+  SERIAL.print("- Bitmap ID: ");
+  SERIAL.println(notification->bitmap_id);
   SERIAL.print("- Summary: ");
   SERIAL.println(notification->summary);
   SERIAL.print("- Timestamp: ");
   SERIAL.println(notification->timestamp);
-  SERIAL.print("- Prev. status: ");
-  SERIAL.println(notification->old_state);
-  SERIAL.print("- Status: ");
-  SERIAL.println(notification->new_state);
-  SERIAL.print("- Change score: ");
-  SERIAL.println(notification->change_score);
 #endif
 
   notif_list_append(notification);
@@ -409,6 +398,9 @@ bool notif_list_remove(notification_t *notif)
   return true;
 }
 
+/**
+ * Update the GLCD.
+ */
 void glcd_draw()
 {
   switch(display)
@@ -444,6 +436,59 @@ void draw_idle()
  */
 void draw_notification(notification_t *notif)
 {
+  // Draw graphic
+  switch(notif->bitmap_id)
+  {
+    case 0:
+      tilda.glcd.drawBitmapP(0, 0, 8, 64, sakuya_1_bitmap);
+      break;
+    case 1:
+      tilda.glcd.drawBitmapP(0, 0, 8, 64, sakuya_2_bitmap);
+      break;
+    case 2:
+      tilda.glcd.drawBitmapP(0, 0, 8, 64, yuuka_bitmap);
+      break;
+    case 3:
+      tilda.glcd.drawBitmapP(0, 0, 8, 64, shiki_bitmap);
+      break;
+    case 4:
+      tilda.glcd.drawBitmapP(0, 0, 8, 64, flan_bitmap);
+      break;
+    case 5:
+      tilda.glcd.drawBitmapP(0, 0, 8, 64, patchy_1_bitmap);
+      break;
+    case 6:
+      tilda.glcd.drawBitmapP(0, 0, 8, 64, patchy_2_bitmap);
+      break;
+  }
+
+  // Draw title
+  tilda.glcd.setFont(u8g_font_courR10);
+  tilda.glcd.setFontPosTop();
+  switch(notif->type)
+  {
+    case NOTIFICATION_TICKET:
+      tilda.glcd.drawStr(64, 0, "Ticket");
+      break;
+    case NOTIFICATION_BUILD:
+      tilda.glcd.drawStr(64, 0, "Build");
+      break;
+    case NOTIFICATION_CALENDAR:
+      tilda.glcd.drawStr(64, 0, "Event");
+      break;
+    case NOTIFICATION_EMAIL:
+      tilda.glcd.drawStr(64, 0, "Email");
+      break;
+  }
+
+  // Draw summary
+  tilda.glcd.setFont(u8g_font_6x10);
+  tilda.glcd.setFontPosTop();
   //TODO
-  tilda.glcd.drawBitmapP(0, 0, 8, 64, flan_bitmap);
+  tilda.glcd.drawStr(64, 15, notif->summary);
+
+  // Draw timestamp
+  tilda.glcd.setFont(u8g_font_5x7);
+  tilda.glcd.setFontPosBaseline();
+  tilda.glcd.drawStr(64, 64, notif->timestamp);
 }

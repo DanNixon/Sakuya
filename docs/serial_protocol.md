@@ -3,14 +3,31 @@ Serial Protocol
 
 Message delimiter: ```#```
 
-Notification: ```N|type|summary|timestamp|prev_status|status|change_score```
-- ```type```: Notification type, index from ```ntype_t``` enum
+Notification: ```N|type|bitmap_id|summary|timestamp|```
+- ```type```: Notification type
+- ```bitmap_id```: Integer ID of bitmap to be shown
 - ```summary```: Textual summary
 - ```timestamp```: Textual timestamp
-- ```prev_status```: Textual previous status (if applicable, ```NA``` if not)
-- ```status```: Textual current status (if applicable, ```NA``` if not)
-- ```change_score```: Signed integer representing how "good" the difference in ```prev_status``` and ``status``` is
 
 LED: ```L|id|r|g|b```
 - ```id```: ID of LED to use (1 or 2, 0 for all)
 - ```r, g, b```: Intensity of each colour channel
+
+Notification Types
+------------------
+
+- 0=Ticket
+- 1=Build
+- 2=Calendar
+- 3=Email
+
+Bitmaps
+-------
+
+- 0=Sakuya 1
+- 1=Sakuya 2
+- 2=Yuuka
+- 3=Shiki
+- 4=Flan
+- 5=Patchy 1
+- 6=Patchy 2
