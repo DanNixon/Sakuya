@@ -30,6 +30,8 @@ void setup(void)
 
 void loop()
 {
+  bool new_notifications = false;
+
   // Process new messages from serial
   while(SERIAL.available())
   {
@@ -44,7 +46,8 @@ void loop()
     switch(data[0])
     {
       case 'N':
-        process_notification_message(data);
+        if(process_notification_message(data))
+          new_notifications = true;
         break;
 
       case 'L':
@@ -62,6 +65,15 @@ void loop()
   // Poll backlight timeout
   backlight_timeout(BACKLIGHT_IDLE_TIMEOUT_MS);
 
+  // Switch to notifications if there are new ones
+  if(new_notifications)
+  {
+    current_display_notif = notif_list_tail();
+    display = DISPLAY_NOTIFICATIONS;
+    enable_backlight();
+  }
+
+  // Make sure there are notifications before trying to display any
   if((display == DISPLAY_NOTIFICATIONS) && (!current_display_notif))
     display = DISPLAY_IDLE;
 
