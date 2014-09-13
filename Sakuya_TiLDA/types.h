@@ -28,12 +28,21 @@ struct notification_t
 {
   ntype_t type;
   char *name;
-  uint64_t timestamp;
+  char *timestamp;
 
   char *old_state;
   char *new_state;
 
   int8_t change_importance;
+};
+
+/**
+ * Data type for notification linked lists.
+ */
+struct nlist_t
+{
+  notification_t *notification;
+  nlist_t *next;
 };
 
 #endif //_SAKUYA_TYPES_H

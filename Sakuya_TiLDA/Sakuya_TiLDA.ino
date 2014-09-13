@@ -5,6 +5,11 @@
 #include "bitmaps.h"
 #include "types.h"
 
+#define SERIAL SerialUSB
+#define BAUD 115200
+#define SERIAL_COMMAND_BUF_LEN 200
+#define SERIAL_DEBUG
+
 #define BACKLIGHT_IDLE_TIMEOUT_MS 30000
 
 TiLDA_MKe tilda;
@@ -12,7 +17,7 @@ display_t display = DISPLAY_IDLE;
 
 void setup(void)
 {
-  SerialUSB.begin(115200);
+  SERIAL.begin(BAUD);
 
   enable_backlight();
 
@@ -22,6 +27,30 @@ void setup(void)
 
 void loop()
 {
+  // Process new messages from serial
+  while(SERIAL.available())
+  {
+    char *data;
+    read_in_data(&data, '#', SERIAL_COMMAND_BUF_LEN);
+
+#ifdef SERIAL_DEBUG
+    SERIAL.print("Got command data: ");
+    SERIAL.println(data);
+#endif
+
+    switch(data[0])
+    {
+      case 'N':
+        process_notification_message(data);
+        break;
+      case 'L':
+        process_led_message(data);
+        break;
+      default:
+        break;
+    }
+  }
+
   // See if there were any button changes
   tilda.buttons.poll();
 
@@ -34,8 +63,7 @@ void loop()
   {
     //TODO
 
-    tilda.glcd.drawBitmapP(0, 0, 8, 64, patchy_1_bitmap);
-    tilda.glcd.drawBitmapP(64, 0, 8, 64, patchy_2_bitmap);
+    tilda.glcd.drawBitmapP(0, 0, 8, 64, sakuya_1_bitmap);
   }
   while(tilda.glcd.nextPage());
 }
@@ -146,4 +174,78 @@ void backlight_timeout(uint64_t timeout)
     tilda.setBacklight(LCD_BACKLIGHT_OFF);
     backlight_on_time = 0;
   }
+}
+
+/**
+ * Reads a section of data from the serial port up to either a given
+ * delimiter or maximum size (whichever comes first).
+ *
+ * @param data Double pointer for data output
+ * @param delimiter Character to stop at
+ * @param buff_size Maximum number of characters to buffer
+ */
+uint8_t read_in_data(char **data, char delimiter, uint8_t buff_size)
+{
+  char buff[buff_size];
+  char c;
+  uint8_t i = 0;
+  do
+  {
+    c = SERIAL.read();
+    if(c == delimiter)
+      break;
+
+    buff[i] = c;
+    i++;
+  }
+  while(SERIAL.available() && (i < buff_size));
+  buff[i] = '\0';
+
+  *data = (char *) malloc(i+1);
+  memcpy(*data, buff, i+1);
+}
+
+/**
+ * Processes a serial message to control the LEDs.
+ *
+ * @param data LED data
+ */
+bool process_led_message(char *data)
+{
+  char msg_type;
+  uint8_t led_id, r, g, b;
+
+  sscanf(data, "%c|%d|%d|%d|%d", &msg_type, &led_id, &r, &g, &b);
+
+  if(msg_type != 'L')
+    return false;
+
+#ifdef SERIAL_DEBUG
+  SERIAL.println("Got LED control message:");
+  SERIAL.print("- LED ID: ");
+  SERIAL.println(led_id);
+  SERIAL.print("- R: ");
+  SERIAL.println(r);
+  SERIAL.print("- G: ");
+  SERIAL.println(g);
+  SERIAL.print("- B: ");
+  SERIAL.println(b);
+#endif
+
+  if(led_id == 0)
+    tilda.setLEDs(r, g, b);
+  else
+    tilda.setLED(led_id, r, g, b);
+
+  return true;
+}
+
+/**
+ * Processes a notification message.
+ *
+ * @param data Notification data
+ */
+void process_notification_message(char *data)
+{
+  //TODO
 }
