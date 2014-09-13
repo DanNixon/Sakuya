@@ -16,6 +16,7 @@ TiLDA_MKe tilda;
 display_t display = DISPLAY_IDLE;
 
 nlist_t *notif_list_head;
+nlist_t *current_display_notif;
 
 void setup(void)
 {
@@ -45,9 +46,11 @@ void loop()
       case 'N':
         process_notification_message(data);
         break;
+
       case 'L':
         process_led_message(data);
         break;
+
       default:
         break;
     }
@@ -59,13 +62,14 @@ void loop()
   // Poll backlight timeout
   backlight_timeout(BACKLIGHT_IDLE_TIMEOUT_MS);
 
+  if((display == DISPLAY_NOTIFICATIONS) && (!current_display_notif))
+    display = DISPLAY_IDLE;
+
   // Display some text on the GLCD
   tilda.glcd.firstPage();
   do
   {
-    //TODO
-
-    tilda.glcd.drawBitmapP(0, 0, 8, 64, sakuya_1_bitmap);
+    draw();
   }
   while(tilda.glcd.nextPage());
 }
@@ -75,6 +79,10 @@ void loop()
  */
 void button_handler(buttonid_t id, uint32_t time)
 {
+  // Ignore short presses
+  if(time < 100)
+    return;
+
   // Toggle backlight on pressing Light button
   if(id == BUTTON_LIGHT)
   {
@@ -92,10 +100,12 @@ void button_handler(buttonid_t id, uint32_t time)
       if(handle_idle_buttons(id))
         enable_backlight();
       break;
+
     case DISPLAY_NOTIFICATIONS:
       if(handle_notification_buttons(id))
         enable_backlight();
       break;
+
     default:
       return;
   }
@@ -113,8 +123,11 @@ bool handle_idle_buttons(buttonid_t id)
     case BUTTON_DOWN:
     case BUTTON_UP:
     case BUTTON_A:
-      //TODO: Go to notification display
+      display = DISPLAY_NOTIFICATIONS;
+      if(!current_display_notif)
+        current_display_notif = notif_list_tail();
       break;
+
     default:
       return false;
   }
@@ -129,20 +142,38 @@ bool handle_idle_buttons(buttonid_t id)
  */
 bool handle_notification_buttons(buttonid_t id)
 {
+  notification_t *current_notif = current_display_notif->notification;
+
   switch(id)
   {
     case BUTTON_DOWN:
-      //TODO: Go to previous notification
+      // Go to previous notification
+      if(current_display_notif->prev)
+        current_display_notif = current_display_notif->prev;
       break;
+
     case BUTTON_UP:
-      //TODO: Go to next notification
+      // Go to next notification
+      if(current_display_notif->next)
+        current_display_notif = current_display_notif->next;
       break;
+
     case BUTTON_A:
-      //TODO: Dismiss notification
+      // Try to find a new notification to display
+      if(current_display_notif->next)
+        current_display_notif = current_display_notif->next;
+      else if(current_display_notif->prev)
+        current_display_notif = current_display_notif->prev;
+      else
+        display = DISPLAY_IDLE;
+
+      notif_list_remove(current_notif);
       break;
+
     case BUTTON_B:
-      //TODO: Go to idle display
+      display = DISPLAY_IDLE;
       break;
+
     default:
       return false;
   }
@@ -307,7 +338,10 @@ nlist_t *notif_list_tail()
 {
   nlist_t *current = notif_list_head;
 
-  while(current->next != NULL)
+  if(!current)
+    return NULL;
+
+  while(current->next)
     current = current->next;
 
   return current;
@@ -347,7 +381,7 @@ bool notif_list_remove(notification_t *notif)
 {
   nlist_t *current = notif_list_head;
 
-  while(current != NULL)
+  while(current)
   {
     if(current->notification == notif)
       break;
@@ -375,4 +409,38 @@ bool notif_list_remove(notification_t *notif)
   delete[] current;
 
   return true;
+}
+
+void draw()
+{
+  switch(display)
+  {
+    case DISPLAY_IDLE:
+      draw_idle();
+      break;
+
+    case DISPLAY_NOTIFICATIONS:
+      draw_notification(current_display_notif->notification);
+      break;
+  }
+}
+
+/**
+ * Draws the idle/no notifications display.
+ */
+void draw_idle()
+{
+  //TODO
+  tilda.glcd.drawBitmapP(0, 0, 8, 64, sakuya_1_bitmap);
+}
+
+/**
+ * Draws infor for a given notification.
+ *
+ * @param notif Notification to draw
+ */
+void draw_notification(notification_t *notif)
+{
+  //TODO
+  tilda.glcd.drawBitmapP(0, 0, 8, 64, flan_bitmap);
 }
