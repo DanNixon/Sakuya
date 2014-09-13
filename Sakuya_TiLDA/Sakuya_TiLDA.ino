@@ -15,6 +15,8 @@
 TiLDA_MKe tilda;
 display_t display = DISPLAY_IDLE;
 
+nlist_t *notif_list_head;
+
 void setup(void)
 {
   SERIAL.begin(BAUD);
@@ -209,6 +211,7 @@ uint8_t read_in_data(char **data, char delimiter, uint8_t buff_size)
  * Processes a serial message to control the LEDs.
  *
  * @param data LED data
+ * @returns True if parsing was successful, false otherwise
  */
 bool process_led_message(char *data)
 {
@@ -244,8 +247,132 @@ bool process_led_message(char *data)
  * Processes a notification message.
  *
  * @param data Notification data
+ * @returns True if parsing was successful, false otherwise
  */
-void process_notification_message(char *data)
+bool process_notification_message(char *data)
 {
-  //TODO
+  size_t data_len = strlen(data);
+
+  char msg_type;
+  notification_t *notification = new notification_t;
+
+  char summary[data_len];
+  char timestamp[data_len];
+  char old_state[data_len];
+  char new_state[data_len];
+
+  sscanf(data, "%c|%d|%[^'|']|%[^'|']|%[^'|']|%[^'|']|%d",
+      &msg_type, &(notification->type), summary, timestamp, old_state, new_state, &(notification->change_score));
+
+  if(msg_type != 'N')
+    return false;
+
+  notification->summary = new char[strlen(summary) + 1];
+  memcpy(notification->summary, summary, strlen(summary) + 1);
+
+  notification->timestamp = new char[strlen(timestamp) + 1];
+  memcpy(notification->timestamp, timestamp, strlen(timestamp) + 1);
+
+  notification->old_state = new char[strlen(old_state) + 1];
+  memcpy(notification->old_state, old_state, strlen(old_state) + 1);
+
+  notification->new_state = new char[strlen(new_state) + 1];
+  memcpy(notification->new_state, new_state, strlen(new_state) + 1);
+
+#ifdef SERIAL_DEBUG
+  SERIAL.println("Got notification message:");
+  SERIAL.print("- Type: ");
+  SERIAL.println(notification->type);
+  SERIAL.print("- Summary: ");
+  SERIAL.println(notification->summary);
+  SERIAL.print("- Timestamp: ");
+  SERIAL.println(notification->timestamp);
+  SERIAL.print("- Prev. status: ");
+  SERIAL.println(notification->old_state);
+  SERIAL.print("- Status: ");
+  SERIAL.println(notification->new_state);
+  SERIAL.print("- Change score: ");
+  SERIAL.println(notification->change_score);
+#endif
+
+  notif_list_append(notification);
+}
+
+/**
+ * Returns a pointer to the last node in the notifications linked list.
+ *
+ * @returns Tail node
+ */
+nlist_t *notif_list_tail()
+{
+  nlist_t *current = notif_list_head;
+
+  while(current->next != NULL)
+    current = current->next;
+
+  return current;
+}
+
+/**
+ * Appends a new notification to the linked list.
+ *
+ * @param notif Notification to append
+ */
+void notif_list_append(notification_t *notif)
+{
+  nlist_t *node = new nlist_t;
+  node->notification = notif;
+  node->next = NULL;
+
+  if(notif_list_head)
+  {
+    nlist_t *tail = notif_list_tail();
+    tail->next = node;
+    node->prev = tail;
+  }
+  else
+  {
+    node->prev = NULL;
+    notif_list_head = node;
+  }
+}
+
+/**
+ * Removes the notification from the linked list.
+ *
+ * @param notif Notification to remove
+ * @returns True if removed successfully, false otherwise
+ */
+bool notif_list_remove(notification_t *notif)
+{
+  nlist_t *current = notif_list_head;
+
+  while(current != NULL)
+  {
+    if(current->notification == notif)
+      break;
+
+    current = current->next;
+  }
+
+  if(!current)
+    return false;
+
+  if(current->prev)
+  {
+    current->prev->next = current->next;
+  }
+  else
+  {
+    current->prev = NULL;
+    notif_list_head = current->next;
+  }
+
+  if(current->next)
+    current->next->prev = current->prev;
+
+  delete[] notif;
+  delete[] current;
+
+  return true;
 }

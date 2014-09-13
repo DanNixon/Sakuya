@@ -7,8 +7,8 @@ Notification: ```N|type|summary|timestamp|prev_status|status|change_score```
 - ```type```: Notification type, index from ```ntype_t``` enum
 - ```summary```: Textual summary
 - ```timestamp```: Textual timestamp
-- ```prev_status```: Textual previous status (if applicable, empty string if not)
-- ```status```: Textual current status (if applicable, empty string if not)
+- ```prev_status```: Textual previous status (if applicable, ```NA``` if not)
+- ```status```: Textual current status (if applicable, ```NA``` if not)
 - ```change_score```: Signed integer representing how "good" the difference in ```prev_status``` and ``status``` is
 
 LED: ```L|id|r|g|b```

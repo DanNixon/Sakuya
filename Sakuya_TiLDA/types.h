@@ -27,13 +27,13 @@ enum ntype_t
 struct notification_t
 {
   ntype_t type;
-  char *name;
+  char *summary;
   char *timestamp;
 
   char *old_state;
   char *new_state;
 
-  int8_t change_importance;
+  int8_t change_score;
 };
 
 /**
@@ -43,6 +43,7 @@ struct nlist_t
 {
   notification_t *notification;
   nlist_t *next;
+  nlist_t *prev;
 };
 
 #endif //_SAKUYA_TYPES_H
