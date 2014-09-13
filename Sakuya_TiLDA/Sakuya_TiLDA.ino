@@ -68,9 +68,7 @@ void loop()
   // Display some text on the GLCD
   tilda.glcd.firstPage();
   do
-  {
-    draw();
-  }
+    glcd_draw();
   while(tilda.glcd.nextPage());
 }
 
@@ -411,7 +409,7 @@ bool notif_list_remove(notification_t *notif)
   return true;
 }
 
-void draw()
+void glcd_draw()
 {
   switch(display)
   {
@@ -430,8 +428,13 @@ void draw()
  */
 void draw_idle()
 {
-  //TODO
   tilda.glcd.drawBitmapP(0, 0, 8, 64, sakuya_1_bitmap);
+
+  tilda.glcd.setFont(u8g_font_helvR12);
+
+  tilda.glcd.drawStr(80, 22, "No");
+  tilda.glcd.drawStr(75, 37, "New");
+  tilda.glcd.drawStr(70, 52, "Alerts");
 }
 
 /**
