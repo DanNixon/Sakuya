@@ -7,7 +7,7 @@
 
 #define SERIAL SerialUSB
 #define BAUD 115200
-#define SERIAL_COMMAND_BUF_LEN 200
+#define SERIAL_COMMAND_BUF_LEN 400
 #define SERIAL_DEBUG
 
 #define BACKLIGHT_IDLE_TIMEOUT_MS 30000
@@ -495,9 +495,8 @@ void draw_notification(notification_t *notif)
 
   // Draw summary
   tilda.glcd.setFont(u8g_font_6x10);
-  tilda.glcd.setFontPosTop();
-  //TODO
-  tilda.glcd.drawStr(64, 15, notif->summary);
+  tilda.drawWrappedStr(64, 8, 63, 45, notif->summary);
+  /* tilda.glcd.drawFrame(64, 8, 63, 45); */
 
   // Draw timestamp
   tilda.glcd.setFont(u8g_font_5x7);
