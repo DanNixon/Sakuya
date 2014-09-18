@@ -36,7 +36,7 @@ void loop()
   while(SERIAL.available())
   {
     char *data;
-    read_in_data(&data, '#', SERIAL_COMMAND_BUF_LEN);
+    read_in_data(&data, ';', SERIAL_COMMAND_BUF_LEN);
 
 #ifdef SERIAL_DEBUG
     SERIAL.print("Got command data: ");
@@ -495,11 +495,10 @@ void draw_notification(notification_t *notif)
 
   // Draw summary
   tilda.glcd.setFont(u8g_font_6x10);
-  tilda.drawWrappedStr(64, 8, 63, 45, notif->summary);
-  /* tilda.glcd.drawFrame(64, 8, 63, 45); */
+  tilda.drawWrappedStr(64, 10, 63, 50, notif->summary);
 
   // Draw timestamp
   tilda.glcd.setFont(u8g_font_5x7);
   tilda.glcd.setFontPosBaseline();
-  tilda.glcd.drawStr(64, 64, notif->timestamp);
+  tilda.glcd.drawStr(64, 64 + tilda.glcd.getFontDescent(), notif->timestamp);
 }

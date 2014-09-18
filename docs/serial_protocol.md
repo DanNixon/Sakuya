@@ -1,9 +1,9 @@
 Serial Protocol
 ===============
 
-Message delimiter: ```#```
+Message delimiter: ```;```
 
-Notification: ```N|type|bitmap_id|summary|timestamp|```
+Notification: ```N|type|bitmap_id|summary|timestamp```
 - ```type```: Notification type
 - ```bitmap_id```: Integer ID of bitmap to be shown
 - ```summary```: Textual summary
