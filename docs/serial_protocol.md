@@ -31,3 +31,5 @@ Bitmaps
 - 4=Flan
 - 5=Patchy 1
 - 6=Patchy 2
+- 7=Marisa
+- 8=Suika
