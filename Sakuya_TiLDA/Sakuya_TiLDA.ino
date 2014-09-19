@@ -472,6 +472,12 @@ void draw_notification(notification_t *notif)
     case 6:
       tilda.glcd.drawBitmapP(0, 0, 8, 64, patchy_2_bitmap);
       break;
+    case 7:
+      tilda.glcd.drawBitmapP(0, 0, 8, 64, marisa_bitmap);
+      break;
+    case 8:
+      tilda.glcd.drawBitmapP(0, 0, 8, 64, suika_bitmap);
+      break;
   }
 
   // Draw title
