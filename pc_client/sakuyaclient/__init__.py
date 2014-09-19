@@ -1,10 +1,15 @@
 import argparse
 import sys
 
+from notification_centre import NotificationCentre
+
+from tilda_driver import TiLDADriver
+
+from console_sink import ConsoleSink
+
 from jenkins import JenkinsClient
 from trac import TracClient
-from notification_centre import NotificationCentre
-from console_sink import ConsoleSink
+
 
 def run():
     """
@@ -22,6 +27,20 @@ def run():
         '-p', '--port',
         action='store',
         help='Specifies serial port to communicate with TiLDA MKe'
+    )
+
+    parser.add_argument(
+        '--baud',
+        action='store',
+        type=int,
+        default=115200,
+        help='Specifies serial baud rate'
+    )
+
+    parser.add_argument(
+        '--tilda-test',
+        action='store_true',
+        help='Perform a test of the TiLDA MKe and exit'
     )
 
     parser.add_argument(
@@ -76,20 +95,57 @@ def run():
 
     props = parser.parse_args()
 
-    start_client(props)
+    if props.tilda_test:
+        tilda_test(props)
+    else:
+        start_client(props)
+
 
 def start_client(props):
+    """
+    Runs the client application.
+
+    @param props Application properties
+    """
+
+    # Create notification manager
+    notifications = NotificationCentre(props.interval)
+
+    # Create notification sources
     jenkins = JenkinsClient(props.jenkins_url, props.jenkins_cache, props.builds.split(','))
     trac = TracClient(props.trac_url, props.trac_cache)
     trac.set_subscriptions(props.ticket_owners.split(','))
 
-    notifications = NotificationCentre(props.interval)
-
+    # Add notification sources
     notifications.add_notification_source('tickets', trac)
     notifications.add_notification_source('builds', jenkins)
 
-    notification_sink = ConsoleSink(props.verbose)
+    # Create notification sinks
+    console_sink = ConsoleSink(props.verbose)
 
-    notifications.add_notification_sink('console1', notification_sink)
+    # Add notification sinks
+    notifications.add_notification_sink('console1', console_sink)
 
+    # Start update loop
     notifications.start()
+
+
+def tilda_test(props):
+    """
+    Runs a simple test of the TiLDA.
+
+    @param props Application properties
+    """
+
+    tilda = TiLDADriver()
+    tilda.connect(props.port, props.baud)
+
+    tilda.set_led(1, 10, 0, 0)
+    tilda.set_led(2, 0, 10, 0)
+
+    tilda.send_notification(0, 0, 'Test notif. #1', 'NOW')
+    tilda.send_notification(1, 1, 'Test notif. #2', 'NOW')
+    tilda.send_notification(2, 2, 'Test notif. #3', 'NOW')
+    tilda.send_notification(3, 3, 'Test notif. #4', 'NOW')
+
+    tilda.release()
