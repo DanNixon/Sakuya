@@ -487,4 +487,14 @@ const uint8_t flan_bitmap[] U8G_PROGMEM =
   0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
 };
 
+// threshold=255
+const uint8_t marisa_bitmap[] U8G_PROGMEM =
+{
+}
+
+// threshold=255
+const uint8_t suika_bitmap[] U8G_PROGMEM =
+{
+}
+
 #endif //_SAKUYA_BITMAPS_H
