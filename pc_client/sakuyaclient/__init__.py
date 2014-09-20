@@ -6,6 +6,7 @@ from notification_centre import NotificationCentre
 from tilda_driver import TiLDADriver
 
 from console_sink import ConsoleSink
+from tilda_sink import TiLDASink
 
 from jenkins import JenkinsClient
 from trac import TracClient
@@ -56,6 +57,13 @@ def run():
         action='store',
         default='develop_incremental,develop_clean,develop_doctest,develop_systemtests_rhel6,develop_systemtests_all,cppcheck_develop,doxygen_develop,valgrind_develop_core_packages',
         help='Comma separated list of build jobs to watch'
+    )
+
+    parser.add_argument(
+        '--build-owners',
+        action='store',
+        default='Dan Nixon',
+        help='Name of who to look out for in build culprits'
     )
 
     parser.add_argument(
@@ -120,11 +128,18 @@ def start_client(props):
     notifications.add_notification_source('tickets', trac)
     notifications.add_notification_source('builds', jenkins)
 
-    # Create notification sinks
+    # Create and add console sink
     console_sink = ConsoleSink(props.verbose)
-
-    # Add notification sinks
     notifications.add_notification_sink('console1', console_sink)
+
+    # Create and add TiLDA sink
+    if props.port is not None:
+        tilda = TiLDADriver()
+        if tilda.connect(props.port, props.baud):
+            tilda_sink = TiLDASink(tilda, props.build_owners)
+            notifications.add_notification_sink('tilda1', tilda_sink)
+        else:
+            sys.stdout.write('TiLDA connection failed!')
 
     # Start update loop
     notifications.start()
@@ -149,3 +164,5 @@ def tilda_test(props):
     tilda.send_notification(3, 3, 'Test notif. #4', 'NOW')
 
     tilda.release()
+
+    sys.stdout.write('TiLDA tested.\n')

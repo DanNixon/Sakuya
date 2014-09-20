@@ -20,6 +20,7 @@ setup(
     install_requires=[
         'pyserial',
         'beautifulsoup4',
+        'enum34',
     ],
     include_package_data=True,
     zip_safe=False)

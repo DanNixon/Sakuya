@@ -1,5 +1,33 @@
 import time
 import serial
+from enum import Enum
+
+
+class NotificationTypes(Enum):
+    """
+    Used to identify a TiLDA notification type.
+    """
+
+    TICKET = 0
+    BUILD = 1
+    CALENDAR = 2
+    EMAIL = 3
+
+
+class Bitmaps(Enum):
+    """
+    Used to identify a bitmap for the GLCD.
+    """
+
+    SAKUYA_1 = 0
+    SAKUYA_2 = 1
+    YUUKA = 2
+    SHIKI = 3
+    FLAN = 4
+    PATCHY_1 = 5
+    PATCHY_2 = 6
+    MARISA = 7
+    SUIKA = 8
 
 
 class TiLDADriver(object):
@@ -29,7 +57,11 @@ class TiLDADriver(object):
 
         self._port = serial.Serial(port=port,
                                    baudrate=baud)
-        self._port.open()
+
+        # AFAIK PySerial calls open() in the constructor now, but I'll keep this to be sure port is open
+        if not self._port.isOpen():
+            self._port.open()
+
         return self._port.isOpen()
 
     def release(self):
@@ -49,7 +81,8 @@ class TiLDADriver(object):
         """
 
         port_message = message + self._message_delimiter + self._serial_eol
-        self._port.write(port_message)
+
+        self._port.write(port_message.encode())
         time.sleep(self._write_delay)
 
     def set_led(self, led_id, red, green, blue):
