@@ -174,16 +174,16 @@ class TiLDASink(NotificationSink):
         """
 
         if state == State.WORST:
-            self._tilda.set_led(led_id, 20, 0, 0)
+            self._tilda.set_led(led_id, 4, 0, 0)
 
         if state == State.BAD:
-            self._tilda.set_led(led_id, 20, 5, 0)
+            self._tilda.set_led(led_id, 4, 2, 0)
 
         if state == State.NEUTRAL:
-            self._tilda.set_led(led_id, 20, 20, 0)
+            self._tilda.set_led(led_id, 2, 2, 0)
 
         if state == State.GOOD:
-            self._tilda.set_led(led_id, 0, 20, 10)
+            self._tilda.set_led(led_id, 0, 4, 2)
 
         if state == State.BEST:
-            self._tilda.set_led(led_id, 0, 20, 0)
+            self._tilda.set_led(led_id, 0, 4, 0)
