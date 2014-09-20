@@ -1,5 +1,6 @@
 from abc import ABCMeta, abstractmethod
 
+
 class NotificationSource():
     """
     Abstract class for all notification sources.
@@ -12,11 +13,11 @@ class NotificationSource():
         """
         Used to get a set of changes between data retrieved in this call and the last.
         """
-        raise NotImplemented('No concrete implementation!')
+        raise NotImplementedError('No concrete implementation!')
 
     @abstractmethod
     def name(self):
         """
         Returns a unique name for the source type.
         """
-        raise NotImplemented('No concrete implementation!')
+        raise NotImplementedError('No concrete implementation!')

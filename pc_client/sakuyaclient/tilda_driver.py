@@ -113,14 +113,14 @@ class TiLDADriver(object):
         message = message_format % (notif_type, bitmap_id, summary, timestamp)
         self._send_message(message)
 
-    def play_tone(self, frequencey, time):
+    def play_tone(self, frequencey, duration):
         """
         Plays a tone on the TiLDA peizo speaker.
 
         @param frequencey Frequencey of the tone to be played
-        @param time Time in ms to play the tone for
+        @param duration Time in ms to play the tone for
         """
 
         message_format = 'T|%d|%d'
-        message = message_format % (frequencey, time)
+        message = message_format % (frequencey, duration)
         self._send_message(message)

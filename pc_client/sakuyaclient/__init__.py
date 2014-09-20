@@ -1,15 +1,15 @@
 import argparse
 import sys
 
-from notification_centre import NotificationCentre
+from sakuyaclient.notification_centre import NotificationCentre
 
-from tilda_driver import TiLDADriver
+from sakuyaclient.tilda_driver import TiLDADriver
 
-from console_sink import ConsoleSink
-from tilda_sink import TiLDASink
+from sakuyaclient.console_sink import ConsoleSink
+from sakuyaclient.tilda_sink import TiLDASink
 
-from jenkins import JenkinsClient
-from trac import TracClient
+from sakuyaclient.jenkins import JenkinsClient
+from sakuyaclient.trac import TracClient
 
 
 def run():

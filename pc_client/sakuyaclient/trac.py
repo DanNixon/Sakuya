@@ -1,6 +1,7 @@
 import json
-from notification_source import NotificationSource
-from trac_api import TracAPI
+from sakuyaclient.notification_source import NotificationSource
+from sakuyaclient.trac_api import TracAPI
+
 
 class TracClient(NotificationSource):
     """

@@ -1,6 +1,7 @@
 import urllib
 from bs4 import BeautifulSoup
 
+
 class TracAPI(object):
     """
     Basic API to access Trac via HTML scraping.
@@ -52,7 +53,6 @@ class TracAPI(object):
         Parses a HTML document and extracts ticket information.
         """
         tickets = list()
-        headers = list()
 
         # Get all table rows in tickets table
         for table_row in document.select('.tickets')[0].findAll('tr'):

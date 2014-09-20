@@ -1,5 +1,6 @@
 from abc import ABCMeta, abstractmethod
 
+
 class NotificationSink():
     """
     Abstract class for all notification sinks/handlers.
@@ -12,4 +13,4 @@ class NotificationSink():
         """
         Used to handle new updates retrieved by NotificationCentre.
         """
-        raise NotImplemented('No concrete implementation!')
+        raise NotImplementedError('No concrete implementation!')

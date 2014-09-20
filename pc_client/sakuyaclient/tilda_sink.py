@@ -1,6 +1,15 @@
 from time import gmtime, strftime
-from notification_sink import NotificationSink
-from tilda_driver import NotificationTypes, Bitmaps
+from enum import Enum
+from sakuyaclient.notification_sink import NotificationSink
+from sakuyaclient.tilda_driver import NotificationTypes, Bitmaps
+
+
+class State(Enum):
+    WORST = 0
+    BAD = 1
+    NEUTRAL = 2
+    GOOD = 3
+    BEST = 4
 
 
 class TiLDASink(NotificationSink):
@@ -17,6 +26,9 @@ class TiLDASink(NotificationSink):
         Handle the new notifications.
         """
 
+        jenkins_led_state = State.NEUTRAL
+        trac_led_state = State.NEUTRAL
+
         for source in updates.keys():
             update_type = updates[source][0]
             source_updates = updates[source][1]
@@ -26,10 +38,21 @@ class TiLDASink(NotificationSink):
 
             for update in source_updates:
                 if update_type == 'Jenkins':
-                    self._handle_jenkins(update)
+                    state = self._handle_jenkins(update)
+                    if state.value < jenkins_led_state.value:
+                        jenkins_led_state = state
+                    if state.value > jenkins_led_state.value and jenkins_led_state.value >= State.NEUTRAL.value:
+                        jenkins_led_state = state
 
                 if update_type == 'Trac':
-                    self._handle_trac(update)
+                    state = self._handle_trac(update)
+                    if state.value < trac_led_state.value:
+                        trac_led_state = state
+                    if state.value > trac_led_state.value and trac_led_state.value >= State.NEUTRAL.value:
+                        trac_led_state = state
+
+        self._set_led(1, jenkins_led_state)
+        self._set_led(2, trac_led_state)
 
     def _handle_jenkins(self, job):
         """
@@ -45,6 +68,8 @@ class TiLDASink(NotificationSink):
         job_name = job['name']
         result = job['result']
 
+        state = State.NEUTRAL
+
         if 'last_result' not in job:
             notif_bitmap = Bitmaps.SAKUYA_2
             notif_desc = '%s is %s' % (job_name, result)
@@ -59,18 +84,24 @@ class TiLDASink(NotificationSink):
 
             if change == 'broken' and was_me != '':
                 notif_bitmap = Bitmaps.FLAN
+                state = State.WORST
             if change == 'broken' and was_me == '':
                 notif_bitmap = Bitmaps.PATCHY_2
+                state = State.BAD
             if change == 'fixed':
                 notif_bitmap = Bitmaps.PATCHY_1
+                state = State.BEST
             if change == 'slightly broken':
                 notif_bitmap = Bitmaps.SAKUYA_2
+                state = State.BAD
             if change == 'somewhat fixed':
                 notif_bitmap = Bitmaps.SAKUYA_2
+                state = State.GOOD
 
             notif_desc = '%s was %s %s' % (job_name, change, was_me)
 
         self._tilda.send_notification(NotificationTypes.BUILD.value, notif_bitmap.value, notif_desc, notif_time)
+        return state
 
     def _what_happened_to_the_build(self, result, old_result):
         """
@@ -106,7 +137,6 @@ class TiLDASink(NotificationSink):
         else:
             return ''
 
-
     def _handle_trac(self, ticket):
         """
         Handles giving Trac notifications.
@@ -120,6 +150,13 @@ class TiLDASink(NotificationSink):
         notif_bitmap = Bitmaps.SAKUYA_1
         notif_desc = '%s is now %s' % (ticket_no, status)
 
+        state = State.NEUTRAL
+
+        if status == 'reopened':
+            state = State.WORST
+        if status == 'closed':
+            state = State.BEST
+
         if status == 'reopened' or status == 'closed':
             notif_bitmap = Bitmaps.SHIKI
             notif_desc = '%s was %s' % (ticket_no, status)
@@ -129,3 +166,24 @@ class TiLDASink(NotificationSink):
             notif_desc = '%s is a new ticket' % (ticket_no)
 
         self._tilda.send_notification(NotificationTypes.TICKET.value, notif_bitmap.value, notif_desc, notif_time)
+        return state
+
+    def _set_led(self, led_id, state):
+        """
+        Sets the LEDs such that they represent the worst notification sent in an update.
+        """
+
+        if state == State.WORST:
+            self._tilda.set_led(led_id, 20, 0, 0)
+
+        if state == State.BAD:
+            self._tilda.set_led(led_id, 20, 5, 0)
+
+        if state == State.NEUTRAL:
+            self._tilda.set_led(led_id, 20, 20, 0)
+
+        if state == State.GOOD:
+            self._tilda.set_led(led_id, 0, 20, 10)
+
+        if state == State.BEST:
+            self._tilda.set_led(led_id, 0, 20, 0)

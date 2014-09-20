@@ -1,5 +1,6 @@
 import sys
-from notification_sink import NotificationSink
+from sakuyaclient.notification_sink import NotificationSink
+
 
 class ConsoleSink(NotificationSink):
     """

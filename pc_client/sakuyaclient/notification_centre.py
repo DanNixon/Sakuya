@@ -1,7 +1,6 @@
 import threading
 import time
-from trac import TracClient
-from jenkins import JenkinsClient
+
 
 class NotificationCentre(object):
     """
@@ -56,7 +55,7 @@ class NotificationCentre(object):
         """
         Handles getting new data at a given interval.
         """
-        while(1):
+        while True:
             diffs = self.poll()
 
             for sink_id in self._sinks.keys():

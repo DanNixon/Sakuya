@@ -1,7 +1,8 @@
 import ast
 import json
 import urllib
-from notification_source import NotificationSource
+from sakuyaclient.notification_source import NotificationSource
+
 
 class JenkinsClient(NotificationSource):
     """
