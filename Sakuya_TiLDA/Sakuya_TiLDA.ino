@@ -175,7 +175,11 @@ bool handle_notification_buttons(buttonid_t id)
       else if(current_display_notif->prev)
         current_display_notif = current_display_notif->prev;
       else
+      {
+        // Could not find one, go back to idle display
         display = DISPLAY_IDLE;
+        tilda.setLEDs(0, 0, 0);
+      }
 
       notif_list_remove(current_notif);
       current_display_notif = NULL;
@@ -183,6 +187,7 @@ bool handle_notification_buttons(buttonid_t id)
 
     case BUTTON_B:
       display = DISPLAY_IDLE;
+      tilda.setLEDs(0, 0, 0);
       break;
 
     default:
