@@ -1,4 +1,5 @@
 import argparse
+import logging
 import sys
 
 from sakuyaclient.notification_centre import NotificationCentre
@@ -53,6 +54,20 @@ def run():
     )
 
     parser.add_argument(
+        '--log-file',
+        action='store',
+        default='sakuya.log',
+        help='File to save log to'
+    )
+
+    parser.add_argument(
+        '--log-level',
+        action='store',
+        default='INFO',
+        help='Logging level [DEBUG,INFO,WARNING,ERROR,CRITICAL]'
+    )
+
+    parser.add_argument(
         '--builds',
         action='store',
         default='develop_incremental,develop_clean,develop_doctest,develop_systemtests_rhel6,develop_systemtests_all,cppcheck_develop,doxygen_develop,valgrind_develop_core_packages',
@@ -103,6 +118,12 @@ def run():
 
     props = parser.parse_args()
 
+    log_level = getattr(logging, props.log_level.upper(), None)
+    if not isinstance(log_level, int):
+        log_level = logging.INFO
+
+    logging.basicConfig(level=log_level, filename=props.log_file)
+
     if props.tilda_test:
         tilda_test(props)
     else:
@@ -140,6 +161,7 @@ def start_client(props):
             notifications.add_notification_sink('tilda1', tilda_sink)
         else:
             sys.stdout.write('TiLDA connection failed!')
+            logging.getLogger(__name__).error('TiLDA connection failed!')
 
     # Start update loop
     notifications.start()
@@ -151,6 +173,8 @@ def tilda_test(props):
 
     @param props Application properties
     """
+
+    logging.getLogger(__name__).info('Running TiLDA test...')
 
     tilda = TiLDADriver()
     tilda.connect(props.port, props.baud)

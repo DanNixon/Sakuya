@@ -1,6 +1,7 @@
-import time
-import serial
 from enum import Enum
+import logging
+import serial
+import time
 
 
 class NotificationTypes(Enum):
@@ -55,6 +56,7 @@ class TiLDADriver(object):
         @return True of successful connection
         """
 
+        logging.getLogger(__name__).debug('Opening serial port %s at baud rate %d', port, baud)
         self._port = serial.Serial(port=port,
                                    baudrate=baud)
 
@@ -70,6 +72,7 @@ class TiLDADriver(object):
         """
 
         if self._port is not None:
+            logging.getLogger(__name__).debug('Closing serial port')
             self._port.close()
             self._port = None
 
@@ -81,6 +84,7 @@ class TiLDADriver(object):
         """
 
         port_message = message + self._message_delimiter + self._serial_eol
+        logging.getLogger(__name__).debug('Serial message: %s', port_message)
 
         self._port.write(port_message.encode())
         time.sleep(self._write_delay)

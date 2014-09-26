@@ -6,3 +6,6 @@
 
 # Cache files
 *cache.txt
+
+# Log files
+*.log
