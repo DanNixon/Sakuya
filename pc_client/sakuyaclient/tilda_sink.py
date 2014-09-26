@@ -63,7 +63,7 @@ class TiLDASink(NotificationSink):
 
         # Ignore jobs that are in progress
         if job['inprogress']:
-            return
+            return State.NEUTRAL
 
         job_name = job['name']
         result = job['result']
