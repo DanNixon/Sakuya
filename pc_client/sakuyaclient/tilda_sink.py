@@ -14,7 +14,7 @@ class State(Enum):
 
 class TiLDASink(NotificationSink):
     """
-    Manages notification for the TiLDAMKe.
+    Manages notification for the TiLDA MKe.
     """
 
     def __init__(self, tilda_driver, jenkins_user):
@@ -29,6 +29,8 @@ class TiLDASink(NotificationSink):
         jenkins_led_state = State.NEUTRAL
         trac_led_state = State.NEUTRAL
 
+        update_count = {'Jenkins':0, 'Trac':0}
+
         for source in updates.keys():
             update_type = updates[source][0]
             source_updates = updates[source][1]
@@ -37,6 +39,8 @@ class TiLDASink(NotificationSink):
                 continue
 
             for update in source_updates:
+                update_count[update_type] += 1
+
                 if update_type == 'Jenkins':
                     state = self._handle_jenkins(update)
                     if state.value < jenkins_led_state.value:
@@ -51,8 +55,10 @@ class TiLDASink(NotificationSink):
                     if state.value > trac_led_state.value and trac_led_state.value >= State.NEUTRAL.value:
                         trac_led_state = state
 
-        self._set_led(1, jenkins_led_state)
-        self._set_led(2, trac_led_state)
+        if update_count['Jenkins'] > 0:
+            self._set_led(1, jenkins_led_state)
+        if update_count['Trac'] > 0:
+            self._set_led(2, trac_led_state)
 
     def _handle_jenkins(self, job):
         """

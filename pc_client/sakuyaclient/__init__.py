@@ -123,6 +123,7 @@ def run():
         log_level = logging.INFO
 
     logging.basicConfig(level=log_level, filename=props.log_file)
+    logging.getLogger(__name__).info('Sakuya started')
 
     if props.tilda_test:
         tilda_test(props)
