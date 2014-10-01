@@ -30,7 +30,7 @@ class TracAPI(object):
         if cols is None or len(cols) is 0:
             raise RuntimeError("Can't do a query with no columns")
 
-        url = self._url + '?order=' + order
+        url = self._url + '?max=5000&order=' + order
 
         # Add columns
         for col_name in cols:
