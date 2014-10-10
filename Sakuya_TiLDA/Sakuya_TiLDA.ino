@@ -26,6 +26,9 @@ void setup(void)
 
   // Set button callback
   tilda.buttons.setStateCycleCallback(&button_handler);
+
+  // The tilda buttons can be a bit weird depending on how you touch them
+  tilda.buttons.setDebounceDelay(250);
 }
 
 void loop()
