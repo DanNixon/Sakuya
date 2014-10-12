@@ -8,7 +8,7 @@
 #define SERIAL SerialUSB
 #define BAUD 115200
 #define SERIAL_COMMAND_BUF_LEN 400
-#define SERIAL_DEBUG
+/* #define SERIAL_DEBUG */
 
 #define BACKLIGHT_IDLE_TIMEOUT_MS 30000
 
@@ -48,6 +48,10 @@ void loop()
 
     switch(data[0])
     {
+      case 'P':
+        SERIAL.println("SAKUYA_TILDA");
+        break;
+
       case 'N':
         if(process_notification_message(data))
           new_notifications = true;

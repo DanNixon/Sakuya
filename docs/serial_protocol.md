@@ -3,6 +3,10 @@ Serial Protocol
 
 Message delimiter: ```;```
 
+Ping: ```P```
+- Should get response: ```SAKUYA_TILDA```
+- ```SERIAL_DEBUG``` will likely need to be disabled when using this
+
 Notification: ```N|type|bitmap_id|summary|timestamp```
 - ```type```: Notification type
 - ```bitmap_id```: Integer ID of bitmap to be shown
