@@ -114,12 +114,12 @@ class TiLDASink(NotificationSink):
         Determines in what way a build was broken (or fixed).
         """
 
-        state_change = 'Master Spark\'ed'
+        state_change = 'Master Sparked'
 
-        if result == 'failed' and old_result != 'failed':
+        if result == 'failure' and old_result != 'failure':
             state_change = 'broken'
 
-        if result == 'unstable' and old_result == 'failed':
+        if result == 'unstable' and old_result == 'failure':
             state_change = 'somewhat fixed'
 
         if result == 'success' and old_result != 'success':
