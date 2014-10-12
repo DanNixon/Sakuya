@@ -157,10 +157,16 @@ def start_client(props):
     # Create and add TiLDA sink
     if props.port is not None:
         tilda = TiLDADriver()
-        if tilda.connect(props.port, props.baud):
+
+        try:
+            if props.port == 'auto':
+                tilda.auto_connect(props.baud)
+            else:
+                tilda.connect(props.port, props.baud)
+
             tilda_sink = TiLDASink(tilda, props.build_owners)
             notifications.add_notification_sink('tilda1', tilda_sink)
-        else:
+        except:
             sys.stdout.write('TiLDA connection failed!')
             logging.getLogger(__name__).error('TiLDA connection failed!')
 
@@ -178,7 +184,11 @@ def tilda_test(props):
     logging.getLogger(__name__).info('Running TiLDA test...')
 
     tilda = TiLDADriver()
-    tilda.connect(props.port, props.baud)
+
+    if props.port == 'auto':
+        tilda.auto_connect(props.baud)
+    else:
+        tilda.connect(props.port, props.baud)
 
     tilda.set_led(1, 10, 0, 0)
     tilda.set_led(2, 0, 10, 0)

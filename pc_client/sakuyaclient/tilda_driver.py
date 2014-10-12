@@ -1,6 +1,8 @@
 from enum import Enum
+import glob
 import logging
 import serial
+from serial.serialutil import SerialException
 import time
 
 
@@ -47,24 +49,53 @@ class TiLDADriver(object):
 
         self._write_delay = write_delay
 
+    def auto_connect(self, baud=115200):
+        """
+        Attempts to find a TiLDA on any available serial port.
+
+        @param baud Baud rate to connect at
+        """
+
+        ports = glob.glob('/dev/tty[A-Za-z]*')
+
+        for port in ports:
+            try:
+                self.connect(port, baud)
+            except SerialException:
+                continue
+
+            if self.ping():
+                return
+            else:
+                self.release()
+
+        raise RuntimeError('TiLDA not found on any port')
+
     def connect(self, port='ttyACM0', baud=115200):
         """
         Connects to a TiLDA on the given port at a given baud rate.
 
         @param port Serail port to connect over
         @param baud Baud rate to connect at
-        @return True of successful connection
         """
+
+        self._port = port
+        self._baud = baud
 
         logging.getLogger(__name__).debug('Opening serial port %s at baud rate %d', port, baud)
         self._port = serial.Serial(port=port,
-                                   baudrate=baud)
+                                   baudrate=baud,
+                                   timeout=1)
 
         # AFAIK PySerial calls open() in the constructor now, but I'll keep this to be sure port is open
         if not self._port.isOpen():
             self._port.open()
 
-        return self._port.isOpen()
+        if not self._port.isOpen():
+            raise RuntimeError('Port is not open')
+
+        if not self.ping():
+            raise RuntimeError('TiLDA not found on open port')
 
     def release(self):
         """
@@ -76,6 +107,23 @@ class TiLDADriver(object):
             self._port.close()
             self._port = None
 
+    def ping(self):
+        """
+        Attempts to ping the TiLDA on the active serial port
+        """
+
+        logging.getLogger(__name__).debug('Pinging serial port')
+
+        self._send_message('P')
+        data = self._port.read(size=12);
+        self._port.flushInput()
+        logging.getLogger(__name__).debug('Ping data: %s', str(data))
+
+        ping_good = str(data) == 'SAKUYA_TILDA'
+        logging.getLogger(__name__).debug('Ping result: %s', str(ping_good))
+
+        return ping_good
+
     def _send_message(self, message):
         """
         Sends a message to the port.
@@ -86,7 +134,14 @@ class TiLDADriver(object):
         port_message = message + self._message_delimiter + self._serial_eol
         logging.getLogger(__name__).debug('Serial message: %s', port_message)
 
-        self._port.write(port_message.encode())
+        try:
+            self._port.write(port_message.encode())
+        except SerialException:
+            logging.getLogger(__name__).warning('Failed to write to serial port!')
+            self.release()
+            self.auto_connect(self._baud)
+            self._port.write(port_message.encode())
+
         time.sleep(self._write_delay)
 
     def set_led(self, led_id, red, green, blue):
