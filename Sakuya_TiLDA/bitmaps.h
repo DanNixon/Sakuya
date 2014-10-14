@@ -625,4 +625,14 @@ const uint8_t suika_bitmap[] U8G_PROGMEM =
   0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
 };
 
+// threshold=245
+const uint8_t shiki_2_bitmap[] U8G_PROGMEM =
+{
+}
+
+// threshold=245
+const uint8_t komachi_bitmap[] U8G_PROGMEM =
+{
+}
+
 #endif //_SAKUYA_BITMAPS_H

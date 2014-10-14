@@ -31,9 +31,11 @@ Bitmaps
 - 0=Sakuya 1
 - 1=Sakuya 2
 - 2=Yuuka
-- 3=Shiki
+- 3=Shiki 1
 - 4=Flan
 - 5=Patchy 1
 - 6=Patchy 2
 - 7=Marisa
 - 8=Suika
+- 9=Shiki 2
+- 10=Komachi

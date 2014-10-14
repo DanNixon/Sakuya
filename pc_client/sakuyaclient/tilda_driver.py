@@ -25,12 +25,14 @@ class Bitmaps(Enum):
     SAKUYA_1 = 0
     SAKUYA_2 = 1
     YUUKA = 2
-    SHIKI = 3
+    SHIKI_1 = 3
     FLAN = 4
     PATCHY_1 = 5
     PATCHY_2 = 6
     MARISA = 7
     SUIKA = 8
+    SHIKI_2 = 9
+    KOMACHI = 10
 
 
 class TiLDADriver(object):

@@ -158,18 +158,24 @@ class TiLDASink(NotificationSink):
 
         state = State.NEUTRAL
 
-        if status == 'reopened':
-            state = State.WORST
-        if status == 'closed':
-            state = State.BEST
-
-        if status == 'reopened' or status == 'closed':
-            notif_bitmap = Bitmaps.SHIKI
-            notif_desc = '%s was %s' % (ticket_no, status)
-
         elif status == 'new' or status == 'assigned':
             notif_bitmap = Bitmaps.YUUKA
             notif_desc = '%s is a new ticket' % (ticket_no)
+
+        if status == 'verifying':
+            state = State.GOOD
+            notif_bitmap = Bitmaps.KOMACHI
+            notif_desc = '%s is being verified' % ticket_no
+
+        if status == 'reopened':
+            state = State.WORST
+            notif_bitmap = Bitmaps.SHIKI_2
+            notif_desc = '%s was reopened' % ticket_no
+
+        if status == 'closed':
+            state = State.BEST
+            notif_bitmap = Bitmaps.SHIKI_1
+            notif_desc = '%s was closed' % ticket_no
 
         self._tilda.send_notification(NotificationTypes.TICKET.value, notif_bitmap.value, notif_desc, notif_time)
         return state
