@@ -158,7 +158,7 @@ class TiLDASink(NotificationSink):
 
         state = State.NEUTRAL
 
-        elif status == 'new' or status == 'assigned':
+        if status == 'new' or status == 'assigned':
             notif_bitmap = Bitmaps.YUUKA
             notif_desc = '%s is a new ticket' % (ticket_no)
 
