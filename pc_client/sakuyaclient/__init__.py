@@ -180,6 +180,8 @@ def tilda_test(props):
 
     @param props Application properties
     """
+    import time
+    from sakuyaclient.tilda_driver import BacklightTypes
 
     logging.getLogger(__name__).info('Running TiLDA test...')
 
@@ -197,6 +199,10 @@ def tilda_test(props):
     tilda.send_notification(1, 1, 'Test notif. #2', 'NOW')
     tilda.send_notification(2, 2, 'Test notif. #3', 'NOW')
     tilda.send_notification(3, 3, 'Test notif. #4', 'NOW')
+
+    tilda.set_backlight(BacklightTypes.ON.value)
+    time.sleep(1)
+    tilda.set_backlight(BacklightTypes.OFF.value)
 
     tilda.release()
 

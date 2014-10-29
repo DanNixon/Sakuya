@@ -22,6 +22,16 @@ enum ntype_t
 };
 
 /**
+ * Represents the current backlight mode.
+ */
+enum backlightmode_t
+{
+  BACKLIGHT_OFF,
+  BACKLIGHT_ON_TIMEOUT,
+  BACKLIGHT_ON
+};
+
+/**
  * Stores data for a notification.
  */
 struct notification_t
