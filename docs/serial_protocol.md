@@ -17,6 +17,13 @@ LED: ```L|id|r|g|b```
 - ```id```: ID of LED to use (1 or 2, 0 for all)
 - ```r, g, b```: Intensity of each colour channel
 
+LCD Backlight: ```B|mode```
+- ```mode```: Backlight mode
+
+Tone: ```T|freq|duration```
+- ```freq```: Frequency of tone to play
+- ```duration```: Time in ms to play tone for
+
 Notification Types
 ------------------
 
@@ -39,3 +46,10 @@ Bitmaps
 - 8=Suika
 - 9=Shiki 2
 - 10=Komachi
+
+Backlight Modes
+---------------
+
+- 0=Off
+- 1=On with timeout (will turn off 1 timeout interval after command issued)
+- 2=On indefinitely

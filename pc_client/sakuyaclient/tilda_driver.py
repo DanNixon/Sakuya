@@ -35,6 +35,25 @@ class Bitmaps(Enum):
     KOMACHI = 10
 
 
+class BacklightTypes(Enum):
+    """
+    Used to define a backlight mode.
+    """
+
+    OFF = 0
+    ON_TIMEOUT = 1
+    ON = 2
+
+
+class Bitmaps(Enum):
+    """
+    Used to identify a bitmap for the GLCD.
+    """
+
+    SAKUYA_1 = 0
+    SAKUYA_2 = 1
+
+
 class TiLDADriver(object):
 
     def __init__(self, write_delay=0.1):
@@ -172,6 +191,17 @@ class TiLDADriver(object):
 
         message_format = 'N|%d|%d|%s|%s'
         message = message_format % (notif_type, bitmap_id, summary, timestamp)
+        self._send_message(message)
+
+    def set_backlight(self, backlight_mode):
+        """
+        Sets the backlight mode.
+
+        @param backlight_mode Backlight mode
+        """
+
+        message_format = 'B|%d'
+        message = message_format % (backlight_mode)
         self._send_message(message)
 
     def play_tone(self, frequencey, duration):
