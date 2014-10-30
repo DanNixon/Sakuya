@@ -33,6 +33,7 @@ class Bitmaps(Enum):
     SUIKA = 8
     SHIKI_2 = 9
     KOMACHI = 10
+    NITORI = 11
 
 
 class BacklightTypes(Enum):

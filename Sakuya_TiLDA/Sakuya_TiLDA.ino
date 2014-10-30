@@ -542,6 +542,9 @@ void draw_notification(notification_t *notif)
     case 10:
       tilda.glcd.drawBitmapP(0, 0, 8, 64, komachi_bitmap);
       break;
+    case 11:
+      tilda.glcd.drawBitmapP(0, 0, 8, 64, nitori_bitmap);
+      break;
   }
 
   // Draw title

@@ -162,6 +162,12 @@ class TiLDASink(NotificationSink):
             notif_bitmap = Bitmaps.YUUKA
             notif_desc = '%s is a new ticket' % (ticket_no)
 
+        if status == 'inprogress':
+            for bit in Bitmaps:
+                print bit
+            notif_bitmap = Bitmaps.NITORI
+            notif_desc = '%s is in progress' % (ticket_no)
+
         if status == 'verifying':
             state = State.GOOD
             notif_bitmap = Bitmaps.KOMACHI

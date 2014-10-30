@@ -46,6 +46,7 @@ Bitmaps
 - 8=Suika
 - 9=Shiki 2
 - 10=Komachi
+- 11=Nitori
 
 Backlight Modes
 ---------------
