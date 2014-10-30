@@ -46,15 +46,6 @@ class BacklightTypes(Enum):
     ON = 2
 
 
-class Bitmaps(Enum):
-    """
-    Used to identify a bitmap for the GLCD.
-    """
-
-    SAKUYA_1 = 0
-    SAKUYA_2 = 1
-
-
 class TiLDADriver(object):
 
     def __init__(self, write_delay=0.1):
