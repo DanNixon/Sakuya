@@ -120,12 +120,12 @@ void button_handler(buttonid_t id, uint32_t time)
   {
     case DISPLAY_IDLE:
       if(handle_idle_buttons(id))
-        set_backlight(BACKLIGHT_ON_TIMEOUT)
+        set_backlight(BACKLIGHT_ON_TIMEOUT);
       break;
 
     case DISPLAY_NOTIFICATIONS:
       if(handle_notification_buttons(id))
-        set_backlight(BACKLIGHT_ON_TIMEOUT)
+        set_backlight(BACKLIGHT_ON_TIMEOUT);
       break;
 
     default:
@@ -209,7 +209,7 @@ bool handle_notification_buttons(buttonid_t id)
   return true;
 }
 
-uint64_t backlight_on_time;
+int64_t backlight_on_time;
 
 /**
  * Sets the state of the backlight.
@@ -244,6 +244,9 @@ void set_backlight(backlightmode_t mode)
  */
 void backlight_timeout(uint64_t timeout)
 {
+  if(backlight_on_time == -1)
+    return;
+
   uint64_t delta_t = millis() - backlight_on_time;
   if(delta_t > timeout)
   {
@@ -367,8 +370,18 @@ bool process_notification_message(char *data)
  */
 void process_backlight_message(char *data)
 {
+  char msg_type;
   int backlight_mode;
-  sscanf(data, "%d", &backlight_mode);
+  sscanf(data, "%c|%d", &msg_type, &backlight_mode);
+
+  if(msg_type != 'B')
+    return;
+
+#ifdef SERIAL_DEBUG
+  SERIAL.println("Got backlight message:");
+  SERIAL.print("- Mode: ");
+  SERIAL.println(backlight_mode);
+#endif
 
   set_backlight((backlightmode_t) backlight_mode);
 }
