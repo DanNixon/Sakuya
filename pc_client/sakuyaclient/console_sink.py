@@ -7,8 +7,10 @@ class ConsoleSink(NotificationSink):
     Used to print updates to stdout.
     """
 
-    def __init__(self, verbose):
+    def __init__(self, verbose, jenkins_url_pattern=None, trac_url_pattern=None):
         self._verbose = verbose
+        self._jenkins_url_pattern = jenkins_url_pattern
+        self._trac_url_pattern = trac_url_pattern
 
     def handle(self, updates):
         """
@@ -47,6 +49,10 @@ class ConsoleSink(NotificationSink):
             sys.stdout.write('Build %s is %s\n' %
                     (job['name'], job['result']))
 
+        if self._jenkins_url_pattern is not None:
+            url = self._jenkins_url_pattern % job['name']
+            sys.stdout.write('\t(%s)\n' % url)
+
     def _handle_trac(self, ticket):
         """
         Handles printing a Trac ticket.
@@ -57,3 +63,7 @@ class ConsoleSink(NotificationSink):
         else:
             sys.stdout.write('Ticket %s is %s: %s\n' %
                     (ticket['id'], ticket['status'], ticket['summary']))
+
+        if self._trac_url_pattern is not None:
+            url = self._trac_url_pattern % ticket['id'][1:]
+            sys.stdout.write('\t(%s)\n' % url)

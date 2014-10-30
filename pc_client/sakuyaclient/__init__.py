@@ -151,7 +151,9 @@ def start_client(props):
     notifications.add_notification_source('builds', jenkins)
 
     # Create and add console sink
-    console_sink = ConsoleSink(props.verbose)
+    jenkins_url_pattern = props.jenkins_url + '/job/%s'
+    trac_url_pattern = props.trac_url + '/ticket/%s'
+    console_sink = ConsoleSink(props.verbose, jenkins_url_pattern, trac_url_pattern)
     notifications.add_notification_sink('console1', console_sink)
 
     # Create and add TiLDA sink
