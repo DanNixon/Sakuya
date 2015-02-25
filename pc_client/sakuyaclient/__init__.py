@@ -70,7 +70,7 @@ def run():
     parser.add_argument(
         '--builds',
         action='store',
-        default='develop_incremental,develop_clean,develop_doctest,develop_systemtests_rhel6,develop_systemtests_all,cppcheck_develop,doxygen_develop,valgrind_develop_core_packages,develop_osx-10.9-clang,master_systemtests,master_clean,master_incremental',
+        default='cppcheck_master,doxygen_master,master_clean,master_doctest,master_incremental,master_systemtests,performance_tests_master,pull_requests,pylint_master',
         help='Comma separated list of build jobs to watch'
     )
 
