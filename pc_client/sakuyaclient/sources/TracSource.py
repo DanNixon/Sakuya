@@ -1,9 +1,9 @@
 import json
-from sakuyaclient.notification_source import NotificationSource
-from sakuyaclient.trac_api import TracAPI
+from sakuyaclient.NotificationSource import NotificationSource
+from sakuyaclient.sources.TracAPI import TracAPI
 
 
-class TracClient(NotificationSource):
+class TracSource(NotificationSource):
     """
     Used to manage getting notifications of Trac ticket updates.
     """

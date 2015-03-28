@@ -1,10 +1,10 @@
 import ast
 import json
 import urllib
-from sakuyaclient.notification_source import NotificationSource
+from sakuyaclient.NotificationSource import NotificationSource
 
 
-class JenkinsClient(NotificationSource):
+class JenkinsSource(NotificationSource):
     """
     Access Jenkins and get updates for a given set of jobs.
     """

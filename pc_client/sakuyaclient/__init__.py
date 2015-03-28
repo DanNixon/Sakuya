@@ -2,15 +2,15 @@ import argparse
 import logging
 import sys
 
-from sakuyaclient.notification_centre import NotificationCentre
+from sakuyaclient.NotificationCentre import NotificationCentre
 
-from sakuyaclient.tilda_driver import TiLDADriver
+from sakuyaclient.sinks.TiLDADriver import TiLDADriver
 
-from sakuyaclient.console_sink import ConsoleSink
-from sakuyaclient.tilda_sink import TiLDASink
+from sakuyaclient.sinks.ConsoleSink import ConsoleSink
+from sakuyaclient.sinks.TiLDASink import TiLDASink
 
-from sakuyaclient.jenkins import JenkinsClient
-from sakuyaclient.trac import TracClient
+from sakuyaclient.sources.JenkinsSource import JenkinsSource
+from sakuyaclient.sources.TracSource import TracSource
 
 
 def run():
@@ -142,8 +142,8 @@ def start_client(props):
     notifications = NotificationCentre(props.interval)
 
     # Create notification sources
-    jenkins = JenkinsClient(props.jenkins_url, props.jenkins_cache, props.builds.split(','))
-    trac = TracClient(props.trac_url, props.trac_cache)
+    jenkins = JenkinsSource(props.jenkins_url, props.jenkins_cache, props.builds.split(','))
+    trac = TracSource(props.trac_url, props.trac_cache)
     trac.set_subscriptions(props.ticket_owners.split(','))
 
     # Add notification sources

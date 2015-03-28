@@ -1,6 +1,6 @@
 import os
 import unittest
-from sakuyaclient.jenkins import JenkinsClient
+from sakuyaclient.sources.JenkinsSource import JenkinsSource
 
 class JenkinsClientTest(unittest.TestCase):
 
@@ -9,7 +9,7 @@ class JenkinsClientTest(unittest.TestCase):
         self._server = 'http://builds.mantidproject.org'
         self._cache_filename = 'builds_cache.txt'
 
-        self._jenkins = JenkinsClient(self._server, self._cache_filename, [self._jobs['1']])
+        self._jenkins = JenkinsSource(self._server, self._cache_filename, [self._jobs['1']])
 
     def tearDown(self):
         if os.path.exists(self._cache_filename):

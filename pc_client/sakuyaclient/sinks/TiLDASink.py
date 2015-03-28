@@ -1,7 +1,7 @@
 from time import gmtime, strftime
 from enum import Enum
-from sakuyaclient.notification_sink import NotificationSink
-from sakuyaclient.tilda_driver import NotificationTypes, Bitmaps
+from sakuyaclient.NotificationSink import NotificationSink
+from sakuyaclient.sinks.TiLDADriver import NotificationTypes, Bitmaps
 
 
 class State(Enum):

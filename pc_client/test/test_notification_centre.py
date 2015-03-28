@@ -1,8 +1,8 @@
 import os
 import unittest
-from sakuyaclient.jenkins import JenkinsClient
-from sakuyaclient.trac import TracClient
-from sakuyaclient.notification_centre import NotificationCentre
+from sakuyaclient.sources.JenkinsSource import JenkinsSource
+from sakuyaclient.sources.TracSource import TracSource
+from sakuyaclient.NotificationCentre import NotificationCentre
 
 class NotificationCentreTest(unittest.TestCase):
 
@@ -10,8 +10,8 @@ class NotificationCentreTest(unittest.TestCase):
         self._trac_cache_file = 'ticket_cache.txt'
         self._builds_cache_file = 'builds_cache.txt'
 
-        self._jenkins = JenkinsClient('http://builds.mantidproject.org', self._builds_cache_file, ['develop_clean'])
-        self._trac = TracClient('http://trac.mantidproject.org/mantid', self._trac_cache_file)
+        self._jenkins = JenkinsSource('http://builds.mantidproject.org', self._builds_cache_file, ['develop_clean'])
+        self._trac = TracSource('http://trac.mantidproject.org/mantid', self._trac_cache_file)
         self._trac.set_subscriptions(['Dan Nixon'])
 
         self._notifications = NotificationCentre(300)

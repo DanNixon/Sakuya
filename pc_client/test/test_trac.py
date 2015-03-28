@@ -1,13 +1,13 @@
 import os
 import unittest
-from sakuyaclient.trac import TracClient
+from sakuyaclient.sources.TracSource import TracSource
 
 class TracClientTest(unittest.TestCase):
 
     def setUp(self):
         self._server = 'http://trac.mantidproject.org/mantid'
         self._cache_filename = 'ticket_cache.txt'
-        self._trac = TracClient(self._server, self._cache_filename)
+        self._trac = TracSource(self._server, self._cache_filename)
 
         self._owners = ['Dan Nixon']
 

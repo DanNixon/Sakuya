@@ -1,5 +1,5 @@
 import unittest
-from sakuyaclient.trac_api import TracAPI
+from sakuyaclient.sources.TracAPI import TracAPI
 
 class TracAPITest(unittest.TestCase):
 
