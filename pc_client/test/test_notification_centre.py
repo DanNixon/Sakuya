@@ -1,6 +1,6 @@
 import os
 import unittest
-from sakuyaclient.notification_centre import NotificationCentre
+from sakuyaclient.NotificationCentre import NotificationCentre
 
 
 class NotificationCentreTest(unittest.TestCase):
