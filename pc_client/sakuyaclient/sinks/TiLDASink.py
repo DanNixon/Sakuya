@@ -21,6 +21,7 @@ class TiLDASink(NotificationSink):
         self._tilda = tilda_driver
         self._jenkins_user = jenkins_user
 
+
     def handle(self, updates):
         """
         Handle the new notifications.
@@ -59,6 +60,7 @@ class TiLDASink(NotificationSink):
             self._set_led(1, jenkins_led_state)
         if update_count['Trac'] > 0:
             self._set_led(2, trac_led_state)
+
 
     def _handle_jenkins(self, job):
         """
@@ -109,6 +111,7 @@ class TiLDASink(NotificationSink):
         self._tilda.send_notification(NotificationTypes.BUILD.value, notif_bitmap.value, notif_desc, notif_time)
         return state
 
+
     def _what_happened_to_the_build(self, result, old_result):
         """
         Determines in what way a build was broken (or fixed).
@@ -130,6 +133,7 @@ class TiLDASink(NotificationSink):
 
         return state_change
 
+
     def _was_that_me(self, job):
         """
         Determines if a change to the build status could have been caused by me.
@@ -142,6 +146,7 @@ class TiLDASink(NotificationSink):
                 return 'possibly by me'
         else:
             return ''
+
 
     def _handle_trac(self, ticket):
         """
@@ -183,6 +188,7 @@ class TiLDASink(NotificationSink):
 
         self._tilda.send_notification(NotificationTypes.TICKET.value, notif_bitmap.value, notif_desc, notif_time)
         return state
+
 
     def _set_led(self, led_id, state):
         """

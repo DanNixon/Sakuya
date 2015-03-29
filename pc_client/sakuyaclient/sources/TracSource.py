@@ -11,14 +11,18 @@ class TracSource(NotificationSource):
     def name(self):
         return 'Trac'
 
-    def __init__(self, trac_url, cache_filename):
-        self._url = trac_url
+
+    def __init__(self, config):
+        self._url = config['url']
         self._api = TracAPI(self._url)
 
-        self._cache_filename = cache_filename
+        self._cache_filename = config['cache_filename']
 
         self._subscription = dict()
+        self._subscription['status'] = ['assigned', 'new', 'inprogress', 'verify', 'verifying', 'closed', 'reopened', 'infoneeded']
+        self._subscription['owners'] = config['owners'].split(',')
         self._columns = ['id', 'status', 'summary']  # The bare minimun columns needed
+
 
     def _write_cache(self, filename, tickets):
         """
@@ -26,6 +30,7 @@ class TracSource(NotificationSource):
         """
         with open(filename, 'w+') as cache_file:
             json.dump(tickets, cache_file)
+
 
     def _read_cache(self, filename):
         """
@@ -37,6 +42,7 @@ class TracSource(NotificationSource):
                 return tickets
         except IOError:
             return []
+
 
     def _diff(self, old, new):
         """
@@ -63,15 +69,6 @@ class TracSource(NotificationSource):
 
         return changed_tickets
 
-    def set_subscriptions(self, owners, status=None):
-        """
-        Set the owners and status types that are queried.
-        """
-        if status is None:
-            status = ['assigned', 'new', 'inprogress', 'verify', 'verifying', 'closed', 'reopened', 'infoneeded']
-
-        self._subscription['owners'] = owners
-        self._subscription['status'] = status
 
     def set_data_columns(self, columns):
         """
@@ -87,6 +84,7 @@ class TracSource(NotificationSource):
             columns.append('status')
 
         self._columns = columns
+
 
     def poll(self):
         """

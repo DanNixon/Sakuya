@@ -7,8 +7,10 @@ class TracAPI(object):
     Basic API to access Trac via HTML scraping.
     """
 
+
     def __init__(self, trac_url):
         self._url = trac_url + '/query'
+
 
     def get_query(self, cols=None, owner=None, status=None, order='Priority'):
         """
@@ -22,6 +24,7 @@ class TracAPI(object):
         tickets = self._parse_document(document)
 
         return tickets
+
 
     def _get_url(self, cols, owner, status, order):
         """
@@ -47,6 +50,7 @@ class TracAPI(object):
                 url += '&status=' + status_type
 
         return url
+
 
     def _parse_document(self, document):
         """

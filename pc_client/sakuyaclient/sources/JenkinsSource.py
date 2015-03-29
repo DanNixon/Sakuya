@@ -12,15 +12,19 @@ class JenkinsSource(NotificationSource):
     def name(self):
         return 'Jenkins'
 
-    def __init__(self, server_url, cache_filename, jobs=None):
-        self._url = server_url + '/api/python'
-        self._cache_filename = cache_filename
 
-        self._subscribed_jobs = jobs
+    def __init__(self, config):
+        self._url = config['url'] + '/api/python'
+        self._cache_filename = config['cache_filename']
+
+        jobs = config.get('jobs', None)
+        if jobs is not None:
+            self._subscribed_jobs = jobs.split(',')
 
         # Default to subscribing to all jobs
         if self._subscribed_jobs is None:
             self._subscribed_jobs = self.get_all_job_names()
+
 
     def _write_cache(self, filename, jobs):
         """
@@ -28,6 +32,7 @@ class JenkinsSource(NotificationSource):
         """
         with open(filename, 'w+') as cache_file:
             json.dump(jobs, cache_file)
+
 
     def _read_cache(self, filename):
         """
@@ -40,12 +45,14 @@ class JenkinsSource(NotificationSource):
         except IOError:
             return []
 
+
     def _get_data(self):
         """
         Gets raw data from Jenkins server.
         """
         url = self._url + '?pretty=true&depth=2&tree=jobs[name,healthReport[*],lastCompletedBuild[result],lastBuild[building,result,culprits[fullName]]]'
         return ast.literal_eval(urllib.urlopen(url).read())
+
 
     def _get_raw_job(self, job_name, data):
         """
@@ -59,6 +66,7 @@ class JenkinsSource(NotificationSource):
 
         return job
 
+
     def get_all_job_names(self, data=None):
         """
         Gets the name of all jobs on the server.
@@ -67,6 +75,7 @@ class JenkinsSource(NotificationSource):
             data = self._get_data()
 
         return [job['name'] for job in data['jobs']]
+
 
     def get_job_status(self, job_name, data=None):
         """
@@ -93,6 +102,7 @@ class JenkinsSource(NotificationSource):
 
         return status
 
+
     def get_job_health(self, job_name, data=None):
         """
         Gets the health data for a given job.
@@ -103,6 +113,7 @@ class JenkinsSource(NotificationSource):
         job = self._get_raw_job(job_name, data)
 
         return job['healthReport']
+
 
     def get_subscribed_jobs(self, data=None):
         """
@@ -118,6 +129,7 @@ class JenkinsSource(NotificationSource):
             jobs.append(job_data)
 
         return jobs
+
 
     def poll(self):
         """
