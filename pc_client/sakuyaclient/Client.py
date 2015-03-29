@@ -118,8 +118,6 @@ class Client(object):
         # Create notification manager
         notifications = NotificationCentre(interval)
 
-        print plugin_config
-
         # Create and add sources
         for source_name, source_config in plugin_config['source'].items():
             try:

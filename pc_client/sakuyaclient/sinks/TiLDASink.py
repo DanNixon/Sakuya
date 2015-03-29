@@ -1,7 +1,7 @@
 from time import gmtime, strftime
 from enum import Enum
 from sakuyaclient.NotificationSink import NotificationSink
-from sakuyaclient.sinks.TiLDADriver import NotificationTypes, Bitmaps
+from sakuyaclient.sinks.TiLDADriver import TiLDADriver, NotificationTypes, Bitmaps
 
 
 class State(Enum):
@@ -17,9 +17,15 @@ class TiLDASink(NotificationSink):
     Manages notification for the TiLDA MKe.
     """
 
-    def __init__(self, tilda_driver, jenkins_user):
-        self._tilda = tilda_driver
-        self._jenkins_user = jenkins_user
+    def __init__(self, config):
+        self._tilda = TiLDADriver()
+
+        if 'port' in config:
+            self._tilda.connect(config['port'], config['baud'])
+        else:
+            self._tilda.auto_connect(config['baud'])
+
+        self._jenkins_user = config['jenkins_build_owner']
 
 
     def handle(self, updates):
