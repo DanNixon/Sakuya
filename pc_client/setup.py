@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='sakuya-client',
-    version='0.4.0',
+    version='0.4.1',
     entry_points = {
         'console_scripts': ['sakuya=sakuyaclient:run'],
     },
@@ -16,7 +16,7 @@ setup(
     author='Dan Nixon',
     author_email='dan@dan-nixon.com',
     license='Apache',
-    packages=['sakuyaclient'],
+    packages=['sakuyaclient', 'sakuyaclient.sinks', 'sakuyaclient.sources'],
     install_requires=[
         'pyserial',
         'beautifulsoup4',
