@@ -62,6 +62,9 @@ class TiLDASink(NotificationSink):
                     if state.value > trac_led_state.value and trac_led_state.value >= State.NEUTRAL.value:
                         trac_led_state = state
 
+                if update_type == 'GitHub':
+                    self._handle_github(update)
+
         if update_count['Jenkins'] > 0:
             self._set_led(1, jenkins_led_state)
         if update_count['Trac'] > 0:
@@ -194,6 +197,19 @@ class TiLDASink(NotificationSink):
 
         self._tilda.send_notification(NotificationTypes.TICKET.value, notif_bitmap.value, notif_desc, notif_time)
         return state
+
+
+    def _handle_github(self, notification):
+        """
+        Handles giving GitHub notifications.
+        """
+
+        notif_time = strftime("%H:%M", notification['timestamp'].timetuple())
+
+        self._tilda.send_notification(NotificationTypes.GITHUB.value,
+                                      Bitmaps.MARISA.value,
+                                      notification['title'],
+                                      notif_time)
 
 
     def _set_led(self, led_id, state):

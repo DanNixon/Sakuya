@@ -15,6 +15,8 @@ class NotificationTypes(Enum):
     BUILD = 1
     CALENDAR = 2
     EMAIL = 3
+    GITHUB = 4
+    IRC = 5
 
 
 class Bitmaps(Enum):

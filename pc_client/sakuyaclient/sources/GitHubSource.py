@@ -24,7 +24,7 @@ class GitHubSource(NotificationSource):
 
         notifications = list()
 
-        gh_notifs = self._github.notifications(all=True)
+        gh_notifs = self._github.notifications()
         for notif in gh_notifs:
             parsed_notif = dict()
             parsed_notif['title'] = notif.subject['title']
