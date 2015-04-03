@@ -36,15 +36,18 @@ class ConsoleSink(NotificationSink):
                 if update_type == 'Trac':
                     self._handle_trac(update)
 
+                if update_type == 'GitHub':
+                    self._handle_github(update)
+
             sys.stdout.write('----------\n')
 
 
-    def _print_timestamp(self):
+    def _print_timestamp(self, t=None):
         """
         Prints a timestamp acording to the format in the timestamp_format option.
         """
         if self._timestamp_format is not None:
-            timestamp = time.strftime(self._timestamp_format)
+            timestamp = time.strftime(self._timestamp_format, t)
             sys.stdout.write('%s: ' % timestamp)
 
 
@@ -86,3 +89,13 @@ class ConsoleSink(NotificationSink):
         if self._trac_url_pattern is not None:
             url = self._trac_url_pattern % ticket['id'][1:]
             sys.stdout.write('\t(%s)\n' % url)
+
+
+    def _handle_github(self, notification):
+        """
+        Handle a github notification.
+        """
+
+        self._print_timestamp(notification['timestamp'].timetuple())
+
+        sys.stdout.write('GitHub notification: %s\n\t(%s)\n' % (notification['title'], notification['url']))
