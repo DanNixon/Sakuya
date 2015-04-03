@@ -1,4 +1,5 @@
 import sys
+import time
 from sakuyaclient.NotificationSink import NotificationSink
 
 
@@ -12,6 +13,7 @@ class ConsoleSink(NotificationSink):
         self._verbose = config['verbose'] == 'True'
         self._jenkins_url_pattern = config.get('jenkins_url_pattern', None)
         self._trac_url_pattern = config.get('trac_url_pattern', None)
+        self._timestamp_format = config.get('timestamp_format', None)
 
 
     def handle(self, updates):
@@ -37,10 +39,21 @@ class ConsoleSink(NotificationSink):
             sys.stdout.write('----------\n')
 
 
+    def _print_timestamp(self):
+        """
+        Prints a timestamp acording to the format in the timestamp_format option.
+        """
+        if self._timestamp_format is not None:
+            timestamp = time.strftime(self._timestamp_format)
+            sys.stdout.write('%s: ' % timestamp)
+
+
     def _handle_jenkins(self, job):
         """
         Handles printing a Jenkins build.
         """
+        self._print_timestamp()
+
         if 'last_result' in job:
             if not job['inprogress']:
                 sys.stdout.write('Build %s went from %s to %s\n' %
@@ -61,6 +74,8 @@ class ConsoleSink(NotificationSink):
         """
         Handles printing a Trac ticket.
         """
+        self._print_timestamp()
+
         if 'last_status' in ticket:
             sys.stdout.write('Ticket %s went from %s to %s: %s\n' %
                     (ticket['id'], ticket['last_status'], ticket['status'], ticket['summary']))
