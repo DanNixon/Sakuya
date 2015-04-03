@@ -564,6 +564,12 @@ void draw_notification(notification_t *notif)
     case NOTIFICATION_EMAIL:
       tilda.glcd.drawStr(64, 0, "Email");
       break;
+    case NOTIFICATION_GITHUB:
+      tilda.glcd.drawStr(64, 0, "GitHub");
+      break;
+    case NOTIFICATION_IRC:
+      tilda.glcd.drawStr(64, 0, "IRC");
+      break;
   }
 
   // Draw summary
