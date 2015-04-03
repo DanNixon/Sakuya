@@ -97,5 +97,7 @@ class ConsoleSink(NotificationSink):
         """
 
         self._print_timestamp(notification['timestamp'].timetuple())
+        url = 'https://github.com/notifications'
 
-        sys.stdout.write('GitHub notification: %s\n\t(%s)\n' % (notification['title'], notification['url']))
+        sys.stdout.write('GitHub notification: %s\n\t(%s)\n' % (
+                          notification['title'], url))

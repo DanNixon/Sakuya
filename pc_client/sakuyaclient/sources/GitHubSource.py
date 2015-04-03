@@ -29,7 +29,6 @@ class GitHubSource(NotificationSource):
             parsed_notif = dict()
             parsed_notif['title'] = notif.subject['title']
             parsed_notif['type'] = notif.subject['type']
-            parsed_notif['url'] = notif.url
             parsed_notif['timestamp'] = notif.updated_at
 
             notifications.append(parsed_notif)
