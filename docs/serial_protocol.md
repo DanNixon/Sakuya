@@ -31,6 +31,8 @@ Notification Types
 - 1=Build
 - 2=Calendar
 - 3=Email
+- 4=GitHub
+- 5=IRC
 
 Bitmaps
 -------
