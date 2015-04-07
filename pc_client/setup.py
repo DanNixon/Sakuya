@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='sakuya-client',
-    version='0.4.1',
+    version='0.5.0',
     entry_points = {
         'console_scripts': ['sakuya=sakuyaclient:run'],
     },

@@ -36,7 +36,7 @@ class TiLDASink(NotificationSink):
         jenkins_led_state = State.NEUTRAL
         trac_led_state = State.NEUTRAL
 
-        update_count = {'Jenkins':0, 'Trac':0}
+        update_count = {'Jenkins':0, 'Trac':0, 'GitHub':0}
 
         for source in updates.keys():
             update_type = updates[source][0]
@@ -204,7 +204,7 @@ class TiLDASink(NotificationSink):
         Handles giving GitHub notifications.
         """
 
-        notif_time = strftime("%H:%M", notification['timestamp'].timetuple())
+        notif_time = strftime("%H:%M", gmtime())
 
         self._tilda.send_notification(NotificationTypes.GITHUB.value,
                                       Bitmaps.MARISA.value,

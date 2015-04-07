@@ -47,7 +47,11 @@ class ConsoleSink(NotificationSink):
         Prints a timestamp acording to the format in the timestamp_format option.
         """
         if self._timestamp_format is not None:
-            timestamp = time.strftime(self._timestamp_format, t)
+            if t is not None:
+                timestamp = time.strftime(self._timestamp_format, t)
+            else:
+                timestamp = time.strftime(self._timestamp_format)
+
             sys.stdout.write('%s: ' % timestamp)
 
 
@@ -95,8 +99,8 @@ class ConsoleSink(NotificationSink):
         """
         Handle a github notification.
         """
+        self._print_timestamp()
 
-        self._print_timestamp(notification['timestamp'].timetuple())
         url = 'https://github.com/notifications'
 
         sys.stdout.write('GitHub notification: %s\n\t(%s)\n' % (
